@@ -1,20 +1,20 @@
 workflows:
   sample-workflow:
-    name: workflow
+    name: WearLoop workflow
     max_build_duration: 120
     instance_type: mac_mini_m2
     integrations:
-      app_store_connect: app_key
+      app_store_connect: key
     environment:
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: delmarspra.TicketLedger
+        bundle_identifier: ap.aston.wear.loop
       vars:
-        APP_STORE_CONNECT_KEY: app_key
-        APP_STORE_APPLE_ID: 6802723666
-        BUNDLE_ID: "delmarspra.TicketLedger"
-        XCODE_PROJECT: "TicketLedger.xcodeproj"
-        XCODE_SCHEME: "TicketLedger"
+        APP_STORE_CONNECT_KEY: key
+        APP_STORE_APPLE_ID: 6814609544
+        BUNDLE_ID: "ap.aston.wear.loop"
+        XCODE_PROJECT: "WearLoop.xcodeproj"
+        XCODE_SCHEME: "WearLoop"
     scripts:
       - name: Clean and Resolve SPM Dependencies
         script: |
@@ -30,7 +30,7 @@ workflows:
           #!/bin/sh
           cd $CM_BUILD_DIR
           LATEST_BUILD_NUMBER=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID")
-          agvtool new-version -all 2
+          agvtool new-version -all 1
       - name: Build ipa for distribution
         script: |
           xcode-project build-ipa \
