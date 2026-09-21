@@ -37,21 +37,25 @@ struct TripReadinessView: View {
             }
 
             ScreenBlock(spacing: 14) {
-                HStack(alignment: .top, spacing: 20) {
-                    BigNumber(
-                        value: "\(state.readiness.passedCount)/\(state.readiness.totalCount)",
-                        label: "checks passed",
-                        colour: state.isReady ? Palette.success : Palette.anchor
+                HStack(alignment: .center, spacing: 20) {
+                    CountMedallion(
+                        passed: state.readiness.passedCount,
+                        total: state.readiness.totalCount,
+                        label: "checks",
+                        diameter: 140
                     )
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(state.isReady ? "Ready to go" : "Not ready yet")
+                            .font(TypeScale.sectionTitle)
+                            .tracking(TypeScale.sectionTitleTracking)
+                            .foregroundStyle(state.isReady ? Palette.success : Palette.anchor)
+                        Text(state.startsInText)
+                            .font(TypeScale.caption)
+                            .foregroundStyle(Palette.anchor.opacity(0.65))
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                     Spacer(minLength: 0)
                 }
-                ValueBar(
-                    fraction: state.readiness.totalCount > 0
-                        ? Double(state.readiness.passedCount) / Double(state.readiness.totalCount)
-                        : 0,
-                    fill: state.isReady ? Palette.success : Palette.amber,
-                    height: 12
-                )
             }
 
             ScreenBlock(spacing: 10) {
@@ -110,7 +114,7 @@ struct TripReadinessView: View {
                             .multilineTextAlignment(.leading)
                         Text(item.detail)
                             .font(TypeScale.captionSmall)
-                            .foregroundStyle(item.isPassed ? Palette.anchor.opacity(0.55) : Palette.berry)
+                            .foregroundStyle(item.isPassed ? Palette.anchor.opacity(0.55) : Palette.burgundy)
                             .multilineTextAlignment(.leading)
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -132,7 +136,7 @@ struct TripReadinessView: View {
         }
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Palette.surface))
+        .background(PlateBackground(cornerRadius: 14))
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(item.title), \(item.isPassed ? "passed" : "not passed"). \(item.detail)")
     }

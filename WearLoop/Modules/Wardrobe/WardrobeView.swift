@@ -11,7 +11,7 @@ struct WardrobeView: View {
     var body: some View {
         ScreenScaffold {
             ScreenBlock(spacing: 10) {
-                ScreenHeader("wardrobe", subtitle: presenter.viewState.summaryText) {
+                ScreenHeader("wardrobe", subtitle: presenter.viewState.summaryText, artwork: .wardrobe) {
                     Button {
                         presenter.didTapAddPiece()
                     } label: {
@@ -69,7 +69,7 @@ struct WardrobeView: View {
             }
             .padding(.horizontal, 14)
             .frame(height: 48)
-            .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Palette.surface))
+            .background(PlateBackground(cornerRadius: 14))
             .overlay(
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
                     .strokeBorder(Palette.anchor.opacity(0.2), lineWidth: 2)
@@ -96,7 +96,7 @@ struct WardrobeView: View {
                             .font(.system(size: 10, weight: .black))
                             .foregroundStyle(.white)
                             .frame(width: 18, height: 18)
-                            .background(Circle().fill(Palette.berry))
+                            .background(Circle().fill(Palette.burgundy))
                             .offset(x: 4, y: -4)
                     }
                 }
@@ -286,7 +286,7 @@ struct WardrobeFilterSheet: View {
                         ChipGroup(
                             values: Occasion.allCases,
                             title: { $0.title },
-                            accent: Palette.berry,
+                            accent: Palette.burgundy,
                             isSelected: { draft.occasions.contains($0) },
                             onTap: { draft.occasions.wlToggle($0) }
                         )

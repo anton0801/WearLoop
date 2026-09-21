@@ -11,7 +11,7 @@ struct HomeView: View {
     var body: some View {
         ScreenScaffold {
             ScreenBlock(spacing: 10) {
-                ScreenHeader(presenter.viewState.greeting, subtitle: presenter.viewState.dateText) {
+                ScreenHeader(presenter.viewState.greeting, subtitle: presenter.viewState.dateText, artwork: .home) {
                     Button {
                         presenter.didTapProfile()
                     } label: {
@@ -274,7 +274,7 @@ struct HomeView: View {
     private var eventSection: some View {
         if let name = presenter.viewState.nextEventName {
             ScreenBlock(spacing: 10) {
-                SectionHeader("upcoming event", accent: Palette.berry) {
+                SectionHeader("upcoming event", accent: Palette.burgundy) {
                     Button("All") { presenter.didTapEvents() }
                         .buttonStyle(CompactOutlineButtonStyle())
                 }
@@ -282,7 +282,7 @@ struct HomeView: View {
                     title: name,
                     subtitle: presenter.viewState.nextEventDetail,
                     icon: presenter.viewState.nextEventHasOutfit ? "checkmark.circle.fill" : "exclamationmark.circle.fill",
-                    accent: presenter.viewState.nextEventHasOutfit ? Palette.success : Palette.berry
+                    accent: presenter.viewState.nextEventHasOutfit ? Palette.success : Palette.burgundy
                 ) {
                     presenter.didTapEvent()
                 }
@@ -296,7 +296,7 @@ struct HomeView: View {
     private var tripSection: some View {
         if let trip = presenter.viewState.trip {
             ScreenBlock(spacing: 10) {
-                SectionHeader(trip.isInProgress ? "trip in progress" : "trip readiness", accent: Palette.berry)
+                SectionHeader(trip.isInProgress ? "trip in progress" : "trip readiness", accent: Palette.burgundy)
                 Button {
                     presenter.didTapTrip()
                 } label: {
@@ -317,7 +317,7 @@ struct HomeView: View {
                                     .foregroundStyle(Palette.onAnchor)
                                     .padding(.horizontal, 10)
                                     .padding(.vertical, 6)
-                                    .background(Capsule().fill(Palette.berry))
+                                    .background(Capsule().fill(Palette.burgundy))
                             }
                         }
                         CountProgress(
@@ -343,7 +343,7 @@ struct HomeView: View {
     private var washSection: some View {
         if !presenter.viewState.inWash.isEmpty {
             ScreenBlock(spacing: 10) {
-                SectionHeader("in the wash", accent: Palette.berry) {
+                SectionHeader("in the wash", accent: Palette.burgundy) {
                     Button("Laundry") { presenter.didTapLaundry() }
                         .buttonStyle(CompactOutlineButtonStyle())
                 }
@@ -355,9 +355,7 @@ struct HomeView: View {
                             valueColour: item.isOverdue ? Palette.danger : nil
                         )
                         .padding(14)
-                        .background(
-                            RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Palette.surface)
-                        )
+                        .background(PlateBackground(cornerRadius: 14))
                     }
                     if presenter.viewState.inWash.count > 4 {
                         Text("and \(presenter.viewState.inWash.count - 4) more")
@@ -402,7 +400,7 @@ struct HomeView: View {
         if !presenter.viewState.neverWorn.isEmpty {
             RailSection(
                 title: "never worn",
-                accent: Palette.berry,
+                accent: Palette.burgundy,
                 items: presenter.viewState.neverWorn
             ) { piece in
                 PieceCard(

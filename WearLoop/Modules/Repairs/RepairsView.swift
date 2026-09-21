@@ -11,7 +11,7 @@ struct RepairsView: View {
     var body: some View {
         ScreenScaffold {
             ScreenBlock(spacing: 10) {
-                ScreenHeader("repairs and care", subtitle: presenter.viewState.summaryText) {
+                ScreenHeader("repairs and care", subtitle: presenter.viewState.summaryText, artwork: .repairs) {
                     Button {
                         presenter.didTapAdd()
                     } label: {
@@ -150,7 +150,7 @@ struct RepairsView: View {
                     FactRow(
                         label: "Blocking",
                         value: Plural.count(row.usedInOutfits, "outfit"),
-                        valueColour: Palette.berry
+                        valueColour: Palette.burgundy
                     )
                 }
             }
@@ -180,10 +180,7 @@ struct RepairsView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(16)
-        .background(
-            RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous)
-                .fill(Palette.surface)
-        )
+        .background(PlateBackground(cornerRadius: Metrics.cardRadius))
         .overlay(
             RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous)
                 .strokeBorder(presenter.showsRetireSuggestion(row) ? Palette.danger.opacity(0.4) : .clear, lineWidth: 2)
@@ -233,7 +230,7 @@ struct AddRepairSheet: View {
                             }
                             .padding(.horizontal, 14)
                             .frame(height: 48)
-                            .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Palette.surface))
+                            .background(PlateBackground(cornerRadius: 14))
                             .overlay(
                                 RoundedRectangle(cornerRadius: 14, style: .continuous)
                                     .strokeBorder(Palette.anchor.opacity(0.2), lineWidth: 2)

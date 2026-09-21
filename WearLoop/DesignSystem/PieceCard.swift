@@ -104,25 +104,33 @@ struct StatusTag: View {
             .padding(.horizontal, 8)
             .padding(.top, 4)
             .padding(.bottom, 6)
-            .background(StatusTagShape().fill(fill))
+            .background(
+                StatusTagShape()
+                    .fill(fill)
+                    .overlay(StatusTagShape().fill(Metal.sheen))
+            )
             .accessibilityLabel(text)
     }
 }
 
 extension PieceStatus {
-    /// Tag colour: amber in rotation, berry in the wash, red for repair.
+    /// Gold for a piece that is ready, amber while it is in the wash, burgundy
+    /// when something is wrong with it, graphite when it is put away.
     var tagColour: Color {
         switch self {
-        case .inRotation: return Palette.amber
-        case .inWash: return Palette.berry
-        case .needsRepair: return Palette.danger
+        case .inRotation: return Palette.gold
+        case .inWash: return Palette.amber
+        case .needsRepair: return Palette.burgundy
         case .storedAway: return Palette.anchor
         case .archived: return Palette.anchor.opacity(0.75)
         }
     }
 
     var tagTextColour: Color {
-        self == .inRotation ? Palette.anchor : .white
+        switch self {
+        case .inRotation, .inWash: return Palette.onGold
+        default: return Palette.onAnchor
+        }
     }
 }
 
@@ -168,7 +176,7 @@ struct PieceCard: View {
 
             if isSelected {
                 RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous)
-                    .strokeBorder(Palette.berry, lineWidth: 4)
+                    .strokeBorder(Palette.burgundy, lineWidth: 4)
                 VStack {
                     Spacer(minLength: 0)
                     HStack {
@@ -176,7 +184,7 @@ struct PieceCard: View {
                             .font(.system(size: 13, weight: .black))
                             .foregroundStyle(Palette.onAnchor)
                             .frame(width: 26, height: 26)
-                            .background(Circle().fill(Palette.berry))
+                            .background(Circle().fill(Palette.burgundy))
                         Spacer(minLength: 0)
                     }
                     .padding(10)
@@ -302,14 +310,14 @@ struct OutfitCard: View {
 
             if isSelected {
                 RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous)
-                    .strokeBorder(Palette.berry, lineWidth: 4)
+                    .strokeBorder(Palette.burgundy, lineWidth: 4)
             }
             if outfit.isFavorite {
                 VStack {
                     HStack {
                         Image(systemName: "heart.fill")
                             .font(.system(size: 12, weight: .black))
-                            .foregroundStyle(Palette.berry)
+                            .foregroundStyle(Palette.burgundy)
                             .padding(6)
                             .background(Circle().fill(Palette.surface))
                         Spacer(minLength: 0)
@@ -348,14 +356,17 @@ extension OutfitStatus {
 
     var tagFill: Color {
         switch self {
+        // Green only ever means the outfit is genuinely ready.
         case .ready: return Palette.success
-        case .partlyUnavailable: return Palette.berry
+        case .partlyUnavailable: return Palette.amber
         case .outOfSeason: return Palette.anchor
-        case .needsRepair: return Palette.danger
+        case .needsRepair: return Palette.burgundy
         }
     }
 
-    var tagTextColour: Color { .white }
+    var tagTextColour: Color {
+        self == .partlyUnavailable ? Palette.onGold : Palette.onAnchor
+    }
 }
 
 /// The overlapping pile of garment photos used inside an outfit card.

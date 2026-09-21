@@ -108,19 +108,22 @@ private struct UnderlinedTitle: View {
 /// The 44pt screen title with its 6pt amber underline.
 struct ScreenHeader: View {
     let title: String
+    var artwork: CoinArtwork?
     var subtitle: String?
     /// Trailing control, e.g. the profile button on Home.
     var trailing: AnyView?
 
     @Environment(\.wlDarkSurface) private var isDark
 
-    init(_ title: String, subtitle: String? = nil) {
+    init(_ title: String, subtitle: String? = nil, artwork: CoinArtwork? = nil) {
+        self.artwork = artwork
         self.title = title
         self.subtitle = subtitle
         self.trailing = nil
     }
 
-    init<Trailing: View>(_ title: String, subtitle: String? = nil, @ViewBuilder trailing: () -> Trailing) {
+    init<Trailing: View>(_ title: String, subtitle: String? = nil, artwork: CoinArtwork? = nil, @ViewBuilder trailing: () -> Trailing) {
+        self.artwork = artwork
         self.title = title
         self.subtitle = subtitle
         self.trailing = AnyView(trailing())
@@ -129,6 +132,20 @@ struct ScreenHeader: View {
     var body: some View {
         let colours = SurfaceColours.forDark(isDark)
         VStack(alignment: .leading, spacing: 10) {
+            if let artwork {
+                HStack(spacing: 14) {
+                    CoinEmblem(artwork: artwork)
+                    Rectangle()
+                        .fill(Palette.gold.opacity(0.45))
+                        .frame(height: 1)
+                    Image(systemName: "sparkle")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundStyle(Palette.amber)
+                }
+                .padding(.bottom, 2)
+                .accessibilityHidden(true)
+                .allowsHitTesting(false)
+            }
             HStack(alignment: .top, spacing: 12) {
                 UnderlinedTitle(
                     text: title,
@@ -136,7 +153,7 @@ struct ScreenHeader: View {
                     pointSize: TypeScale.screenTitleSize,
                     tracking: TypeScale.screenTitleTracking,
                     underlineHeight: Metrics.titleUnderlineHeight,
-                    underlineColour: Palette.amber,
+                    underlineColour: Palette.gold,
                     textColour: colours.text,
                     lineLimit: 2
                 )
@@ -160,18 +177,18 @@ struct ScreenHeader: View {
 /// The 24pt section title with its 4pt underline.
 struct SectionHeader: View {
     let title: String
-    var accent: Color = Palette.amber
+    var accent: Color = Palette.gold
     var trailing: AnyView?
 
     @Environment(\.wlDarkSurface) private var isDark
 
-    init(_ title: String, accent: Color = Palette.amber) {
+    init(_ title: String, accent: Color = Palette.gold) {
         self.title = title
         self.accent = accent
         self.trailing = nil
     }
 
-    init<Trailing: View>(_ title: String, accent: Color = Palette.amber, @ViewBuilder trailing: () -> Trailing) {
+    init<Trailing: View>(_ title: String, accent: Color = Palette.gold, @ViewBuilder trailing: () -> Trailing) {
         self.title = title
         self.accent = accent
         self.trailing = AnyView(trailing())

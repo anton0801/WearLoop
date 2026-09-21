@@ -11,7 +11,7 @@ struct LaundryView: View {
     var body: some View {
         ScreenScaffold {
             ScreenBlock(spacing: 10) {
-                ScreenHeader("laundry loop", subtitle: presenter.viewState.summaryText)
+                ScreenHeader("laundry loop", subtitle: presenter.viewState.summaryText, artwork: .laundry)
             }
 
             SegmentBar(items: presenter.segmentItems(), selection: $presenter.section)
@@ -68,7 +68,7 @@ struct LaundryView: View {
             VStack(alignment: .leading, spacing: 16) {
                 RailSection(
                     title: "to wash",
-                    accent: Palette.berry,
+                    accent: Palette.burgundy,
                     actionTitle: "Add",
                     action: { presenter.didTapAddToBasket() },
                     items: presenter.viewState.basket
@@ -84,7 +84,7 @@ struct LaundryView: View {
 
                 ScreenBlock(spacing: 10) {
                     if let warning = presenter.careWarningForBasket() {
-                        WarningPanel(message: warning, tint: Palette.berry)
+                        WarningPanel(message: warning, tint: Palette.burgundy)
                     }
                     PrimaryButton(title: "Start a Load") { presenter.didTapStartLoad() }
                     SecondaryButton(title: "Put Everything Back") { presenter.didTapEmptyBasket() }
@@ -147,7 +147,7 @@ struct LaundryView: View {
                     }
                 }
                 if let warning = item.careWarning {
-                    WarningPanel(message: warning, tint: Palette.berry)
+                    WarningPanel(message: warning, tint: Palette.burgundy)
                 }
                 if !item.notes.wlIsBlank {
                     InlineNotice(text: item.notes, icon: "text.alignleft")
@@ -324,7 +324,7 @@ struct StartLoadSheet: View {
                             },
                             secondaryTitle: "Continue Anyway",
                             secondaryAction: { didAcceptWarning = true },
-                            tint: Palette.berry
+                            tint: Palette.burgundy
                         )
                     }
 
@@ -385,7 +385,7 @@ struct SelectPiecesSheet: View {
                     }
                     .padding(.horizontal, 14)
                     .frame(height: 48)
-                    .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Palette.surface))
+                    .background(PlateBackground(cornerRadius: 14))
                     .overlay(
                         RoundedRectangle(cornerRadius: 14, style: .continuous)
                             .strokeBorder(Palette.anchor.opacity(0.2), lineWidth: 2)

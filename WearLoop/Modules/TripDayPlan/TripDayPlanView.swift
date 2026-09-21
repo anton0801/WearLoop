@@ -72,7 +72,7 @@ struct TripDayPlanView: View {
 
             ScreenBlock(spacing: 10) {
                 if let reason = state.blockReason {
-                    WarningPanel(message: reason, tint: Palette.berry)
+                    WarningPanel(message: reason, tint: Palette.burgundy)
                 }
                 PrimaryButton(title: "Continue to Packing", isEnabled: state.canContinue) {
                     presenter.didTapContinue()
@@ -85,14 +85,14 @@ struct TripDayPlanView: View {
 
     private func coverageSection(_ state: TripDayPlanViewState) -> some View {
         ScreenBlock(spacing: 12) {
-            SectionHeader("coverage", accent: Palette.berry)
+            SectionHeader("coverage", accent: Palette.burgundy)
 
             HStack(spacing: 18) {
                 BigNumber(value: "\(state.coverage.daysCovered)", label: "days covered", isCompact: true)
                 BigNumber(
                     value: "\(state.coverage.daysUndecided)",
                     label: "undecided",
-                    colour: Palette.berry,
+                    colour: Palette.burgundy,
                     isCompact: true
                 )
                 BigNumber(
@@ -169,7 +169,7 @@ struct TripDayPlanView: View {
                         InlineNotice(text: reuse, icon: "arrow.triangle.2.circlepath", colour: Palette.success)
                     }
                     if let warning = row.warningText {
-                        WarningPanel(message: warning, tint: Palette.berry)
+                        WarningPanel(message: warning, tint: Palette.burgundy)
                     }
 
                     HStack(spacing: 10) {
@@ -184,7 +184,7 @@ struct TripDayPlanView: View {
                             ? "Marked as undecided. You can pack for this day later."
                             : "No outfit yet. Assign one or mark the day as undecided to move on.",
                         icon: row.isUndecided ? "questionmark.circle" : "exclamationmark.circle",
-                        colour: row.isUndecided ? Palette.anchor.opacity(0.6) : Palette.berry
+                        colour: row.isUndecided ? Palette.anchor.opacity(0.6) : Palette.burgundy
                     )
                     HStack(spacing: 10) {
                         PrimaryButton(title: "Assign Outfit", isEnabled: state.hasOutfits) {

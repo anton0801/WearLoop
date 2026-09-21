@@ -90,7 +90,7 @@ struct EventFormView: View {
                 ChipGroup(
                     values: Occasion.allCases,
                     title: { $0.title },
-                    accent: Palette.berry,
+                    accent: Palette.burgundy,
                     isSelected: { $0 == presenter.viewState.occasion },
                     onTap: { presenter.setOccasion($0) }
                 )
@@ -145,7 +145,7 @@ struct EventFormView: View {
 
     private var outfitSection: some View {
         ScreenBlock(spacing: 12) {
-            SectionHeader("assigned outfit", accent: Palette.berry)
+            SectionHeader("assigned outfit", accent: Palette.burgundy)
 
             if !presenter.viewState.hasOutfits {
                 EmptyStateView(
@@ -188,7 +188,7 @@ struct EventFormView: View {
                 if let backup = presenter.viewState.backupName {
                     FactRow(label: "Backup Outfit", value: backup)
                         .padding(14)
-                        .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Palette.surface))
+                        .background(PlateBackground(cornerRadius: 14))
                     TextButton(title: "Change backup") { presenter.didTapAssignBackup() }
                 } else {
                     SecondaryButton(title: "Add a Backup Outfit") { presenter.didTapAssignBackup() }
@@ -210,10 +210,10 @@ struct EventFormView: View {
     @ViewBuilder
     private var warnings: some View {
         if let repeatWarning = presenter.viewState.repeatWarning {
-            InlineNotice(text: repeatWarning, icon: "clock.arrow.circlepath", colour: Palette.berry)
+            InlineNotice(text: repeatWarning, icon: "clock.arrow.circlepath", colour: Palette.burgundy)
         }
         if let availability = presenter.viewState.availabilityWarning {
-            WarningPanel(message: availability, tint: Palette.berry)
+            WarningPanel(message: availability, tint: Palette.burgundy)
         }
         if !presenter.didDismissWarnings {
             if let formality = presenter.viewState.formalityWarning {

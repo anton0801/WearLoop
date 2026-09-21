@@ -23,9 +23,14 @@ struct OutfitFlatLay: View {
 
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous)
-                .fill(Palette.surface)
-                .halftoneBacking(enabled: showHalftone, opacity: 0.16, focus: .center, spacing: 30)
+            PlateBackground(cornerRadius: Metrics.cardRadius)
+                .halftoneBacking(
+                    enabled: showHalftone,
+                    colour: Palette.gold,
+                    opacity: 0.20,
+                    focus: .center,
+                    spacing: 30
+                )
                 .clipShape(RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous))
 
             if pieces.isEmpty {
@@ -124,7 +129,7 @@ struct OutfitFlatLay: View {
         .overlay(
             RoundedRectangle(cornerRadius: Metrics.flatLayPieceRadius, style: .continuous)
                 .strokeBorder(
-                    unavailableIDs.contains(entry.piece.id) ? Palette.berry : .clear,
+                    unavailableIDs.contains(entry.piece.id) ? Palette.burgundy : .clear,
                     lineWidth: 3
                 )
         )
@@ -171,7 +176,9 @@ struct LuggageGauge: View {
                     .padding(.horizontal, 10)
                     .padding(.vertical, 5)
                     .background(
-                        RoundedRectangle(cornerRadius: 6, style: .continuous).fill(Palette.danger)
+                        RoundedRectangle(cornerRadius: 6, style: .continuous)
+                            .fill(Palette.danger)
+                            .overlay(RoundedRectangle(cornerRadius: 6, style: .continuous).fill(Metal.sheen))
                     )
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             }
@@ -191,6 +198,7 @@ struct LuggageGauge: View {
                         Spacer(minLength: 0)
                         Rectangle()
                             .fill(isOverLimit ? Palette.danger : Palette.amber)
+                            .overlay(Rectangle().fill(Metal.sheen))
                             .frame(height: geometry.size.height * clamped)
                     }
                 }
@@ -214,8 +222,14 @@ struct LuggageGauge: View {
             }
             .frame(width: Metrics.luggageGaugeSize.width, height: Metrics.luggageGaugeSize.height)
             .overlay(
+                // The gauge is cased in gold, like the rim of a medallion.
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .strokeBorder(Palette.anchor, lineWidth: 3)
+                    .strokeBorder(Palette.goldLeaf, lineWidth: 3)
+            )
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(Palette.surface)
+                    .shadow(color: Palette.anchor.opacity(0.16), radius: 10, x: 0, y: 5)
             )
         }
         .onAppear {
@@ -296,23 +310,29 @@ struct WearCalendarStrip: View {
                     .foregroundStyle(colours.mutedText)
 
                 ZStack {
+                    // A day that was actually worn is struck in gold.
                     Circle()
-                        .fill(day.isWorn ? Palette.amber : (isDark ? colours.card : Palette.surface))
+                        .fill(day.isWorn ? Palette.gold : (isDark ? colours.card : Palette.surface))
+                        .overlay(Circle().fill(day.isWorn ? Metal.sheen : LinearGradient(colors: [.clear], startPoint: .top, endPoint: .bottom)))
+                        .shadow(color: day.isWorn ? Palette.anchor.opacity(0.18) : .clear, radius: 4, y: 2)
+                    if day.isWorn {
+                        Circle().strokeBorder(Palette.medallionRim, lineWidth: 2)
+                    }
                     if day.isPlanned && !day.isWorn {
-                        Circle().strokeBorder(Palette.berry, lineWidth: 3)
+                        Circle().strokeBorder(Palette.burgundy, lineWidth: 3)
                     }
                     if isSelected {
                         Circle().strokeBorder(colours.text, lineWidth: 2)
                     }
                     Text(DateFormatterCache.dayNumber.string(from: day.date))
                         .font(.system(size: 16, weight: .black).monospacedDigit())
-                        .foregroundStyle(day.isWorn ? Palette.anchor : colours.text)
+                        .foregroundStyle(day.isWorn ? Palette.onGold : colours.text)
                 }
                 .frame(width: Metrics.wearDayCircle, height: Metrics.wearDayCircle)
 
                 // Today gets a small mark rather than a different shape.
                 Circle()
-                    .fill(day.isToday ? Palette.berry : .clear)
+                    .fill(day.isToday ? Palette.burgundy : .clear)
                     .frame(width: 5, height: 5)
             }
             .contentShape(Rectangle())

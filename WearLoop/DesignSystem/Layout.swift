@@ -80,7 +80,7 @@ struct CardRail<Item: Identifiable, Content: View>: View {
 /// A rail with a section header above it and an optional trailing action.
 struct RailSection<Item: Identifiable, Content: View>: View {
     let title: String
-    var accent: Color = Palette.amber
+    var accent: Color = Palette.gold
     var actionTitle: String?
     var action: (() -> Void)?
     let items: [Item]
@@ -135,8 +135,16 @@ struct Panel<Content: View>: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(padding)
         .background(
-            RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous)
-                .fill(fill ?? (isDark ? colours.card : Palette.surface))
+            Group {
+                if isDark {
+                    RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous)
+                        .fill(fill ?? colours.card)
+                } else if let fill {
+                    RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous).fill(fill)
+                } else {
+                    PlateBackground(cornerRadius: Metrics.cardRadius)
+                }
+            }
         )
         .overlay(
             RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous)
@@ -170,8 +178,13 @@ struct InlineNotice: View {
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(isDark ? colours.card : Palette.surface)
+            Group {
+                if isDark {
+                    RoundedRectangle(cornerRadius: 14, style: .continuous).fill(colours.card)
+                } else {
+                    PlateBackground(cornerRadius: 14, isRaised: false)
+                }
+            }
         )
     }
 }
@@ -253,8 +266,13 @@ struct NavigationRow: View {
             .padding(14)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(isDark ? colours.card : Palette.surface)
+                Group {
+                    if isDark {
+                        RoundedRectangle(cornerRadius: 14, style: .continuous).fill(colours.card)
+                    } else {
+                        PlateBackground(cornerRadius: 14)
+                    }
+                }
             )
             .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         }
@@ -308,10 +326,22 @@ struct EmptyStateView: View {
         .padding(22)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous)
-                .fill(isDark ? colours.card : Palette.surface)
-                .halftoneBacking(enabled: showHalftone, opacity: isDark ? 0.12 : 0.2, focus: .topTrailing, spacing: 30)
-                .clipShape(RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous))
+            Group {
+                if isDark {
+                    RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous)
+                        .fill(colours.card)
+                } else {
+                    PlateBackground(cornerRadius: Metrics.cardRadius)
+                }
+            }
+            .halftoneBacking(
+                enabled: showHalftone,
+                colour: Palette.gold,
+                opacity: isDark ? 0.12 : 0.22,
+                focus: .topTrailing,
+                spacing: 30
+            )
+            .clipShape(RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous))
         )
     }
 }
@@ -355,10 +385,7 @@ struct ErrorStateView: View {
         }
         .padding(22)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous)
-                .fill(Palette.surface)
-        )
+        .background(PlateBackground(cornerRadius: Metrics.cardRadius, tint: Palette.danger))
         .overlay(
             RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous)
                 .strokeBorder(Palette.danger, lineWidth: 2)
@@ -426,9 +453,17 @@ struct ValueBar: View {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {
                 RoundedRectangle(cornerRadius: height / 2, style: .continuous)
-                    .fill(Palette.anchor.opacity(0.1))
+                    .fill(Palette.plateShade.opacity(0.9))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: height / 2, style: .continuous)
+                            .strokeBorder(Palette.anchor.opacity(0.10), lineWidth: 1)
+                    )
                 RoundedRectangle(cornerRadius: height / 2, style: .continuous)
                     .fill(fill)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: height / 2, style: .continuous)
+                            .fill(Metal.sheen)
+                    )
                     .frame(width: max(geometry.size.width * min(max(fraction, 0), 1), fraction > 0 ? 6 : 0))
             }
         }

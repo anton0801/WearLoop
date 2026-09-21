@@ -110,7 +110,7 @@ struct PieceDetailsView: View {
             HStack(alignment: .top, spacing: 18) {
                 BigNumber(value: "\(state.timesWorn)", label: "times worn", isCompact: true)
                 if let cost = state.costPerWearText {
-                    BigNumber(value: cost, label: "cost per wear", colour: Palette.berry, isCompact: true)
+                    BigNumber(value: cost, label: "cost per wear", colour: Palette.burgundy, isCompact: true)
                 }
                 Spacer(minLength: 0)
             }
@@ -162,7 +162,7 @@ struct PieceDetailsView: View {
                 InlineNotice(
                     text: "Packed for \(state.upcomingTripNames.joined(separator: ", ")).",
                     icon: "suitcase.fill",
-                    colour: Palette.berry
+                    colour: Palette.burgundy
                 )
             }
         }
@@ -232,7 +232,7 @@ struct PieceDetailsView: View {
         } else {
             RailSection(
                 title: "used in outfits",
-                accent: Palette.berry,
+                accent: Palette.burgundy,
                 actionTitle: "Build New",
                 action: { presenter.didTapBuildOutfit() },
                 items: state.outfits
@@ -284,7 +284,7 @@ struct PieceDetailsView: View {
     private func laundryHistorySection(_ state: PieceDetailsViewState) -> some View {
         if !state.laundryHistory.isEmpty {
             ScreenBlock(spacing: 10) {
-                SectionHeader("laundry history", accent: Palette.berry)
+                SectionHeader("laundry history", accent: Palette.burgundy)
                 VStack(spacing: 8) {
                     ForEach(state.laundryHistory) { entry in
                         historyRow(entry)
@@ -316,7 +316,7 @@ struct PieceDetailsView: View {
         }
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Palette.surface))
+        .background(PlateBackground(cornerRadius: 14))
         .accessibilityElement(children: .combine)
     }
 

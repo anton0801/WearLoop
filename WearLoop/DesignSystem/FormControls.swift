@@ -31,7 +31,7 @@ struct FieldFrame<Content: View>: View {
                 if isRequired {
                     Text("required")
                         .font(TypeScale.captionSmall)
-                        .foregroundStyle(Palette.berry)
+                        .foregroundStyle(Palette.burgundy)
                 }
             }
 
@@ -81,7 +81,7 @@ struct WLTextField: View {
             .onSubmit { onSubmit?() }
             .padding(.horizontal, 14)
             .frame(height: 52)
-            .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Palette.surface))
+            .background(PlateBackground(cornerRadius: 14))
             .overlay(
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
                     .strokeBorder(hasError ? Palette.danger : Palette.anchor.opacity(0.25), lineWidth: 2)
@@ -96,7 +96,7 @@ struct WLTextEditor: View {
 
     var body: some View {
         ZStack(alignment: .topLeading) {
-            RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Palette.surface)
+            PlateBackground(cornerRadius: 14, isRaised: false)
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .strokeBorder(Palette.anchor.opacity(0.25), lineWidth: 2)
 
@@ -156,7 +156,7 @@ struct WLNumberField: View {
         }
         .padding(.horizontal, 14)
         .frame(height: 52)
-        .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Palette.surface))
+        .background(PlateBackground(cornerRadius: 14))
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .strokeBorder(hasError ? Palette.danger : Palette.anchor.opacity(0.25), lineWidth: 2)
@@ -371,11 +371,11 @@ struct WLDateRow: View {
                 }
             }
             .labelsHidden()
-            .tint(Palette.berry)
+            .tint(Palette.burgundy)
         }
         .padding(.horizontal, 14)
         .frame(height: 52)
-        .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Palette.surface))
+        .background(PlateBackground(cornerRadius: 14))
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .strokeBorder(Palette.anchor.opacity(0.25), lineWidth: 2)
@@ -399,7 +399,7 @@ struct WLOptionalDateRow: View {
                         displayedComponents: .date
                     )
                     .labelsHidden()
-                    .tint(Palette.berry)
+                    .tint(Palette.burgundy)
                     Spacer(minLength: 8)
                     Button { date = nil } label: {
                         Image(systemName: "xmark.circle.fill")
@@ -411,7 +411,7 @@ struct WLOptionalDateRow: View {
                 }
                 .padding(.horizontal, 14)
                 .frame(height: 52)
-                .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Palette.surface))
+                .background(PlateBackground(cornerRadius: 14))
                 .overlay(
                     RoundedRectangle(cornerRadius: 14, style: .continuous)
                         .strokeBorder(Palette.anchor.opacity(0.25), lineWidth: 2)
@@ -427,7 +427,7 @@ struct WLOptionalDateRow: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 14)
                     .frame(height: 52)
-                    .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Palette.surface))
+                    .background(PlateBackground(cornerRadius: 14))
                     .overlay(
                         RoundedRectangle(cornerRadius: 14, style: .continuous)
                             .strokeBorder(Palette.anchor.opacity(0.25), style: StrokeStyle(lineWidth: 2))

@@ -152,7 +152,7 @@ final class PieceDetailsInteractor: PieceDetailsInteractorProtocol {
                 title: record.loadName,
                 detail: record.temperatureC.map { "\(detail) · \($0) °C" } ?? detail,
                 dateText: DateFormatterCache.dayMonthYear.string(from: record.sentAt),
-                accent: Palette.berry
+                accent: Palette.burgundy
             )
         }
 

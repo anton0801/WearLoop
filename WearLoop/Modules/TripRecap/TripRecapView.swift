@@ -59,7 +59,7 @@ struct TripRecapView: View {
                     InlineNotice(
                         text: "This trip was finished without full records, so the figures below are incomplete.",
                         icon: "exclamationmark.triangle.fill",
-                        colour: Palette.berry
+                        colour: Palette.burgundy
                     )
                 }
             }
@@ -78,7 +78,7 @@ struct TripRecapView: View {
 
     private func headline(_ state: TripRecapViewState) -> some View {
         ScreenBlock(spacing: 14) {
-            SectionHeader("planned vs worn", accent: Palette.berry)
+            SectionHeader("planned vs worn", accent: Palette.burgundy)
 
             HStack(alignment: .top, spacing: 20) {
                 BigNumber(value: "\(state.packedCount)", label: "pieces packed", isCompact: true)
@@ -125,7 +125,7 @@ struct TripRecapView: View {
                 FactRow(
                     label: "Never Worn on This Trip",
                     value: "\(state.neverWorn.count)",
-                    valueColour: state.neverWorn.isEmpty ? Palette.success : Palette.berry
+                    valueColour: state.neverWorn.isEmpty ? Palette.success : Palette.burgundy
                 )
                 Divider().overlay(Palette.anchor.opacity(0.1))
                 FactRow(label: "Outfits Changed", value: "\(state.outfitsChanged)")
@@ -153,7 +153,7 @@ struct TripRecapView: View {
         } else {
             RailSection(
                 title: "never worn on this trip",
-                accent: Palette.berry,
+                accent: Palette.burgundy,
                 items: state.neverWorn
             ) { piece in
                 PieceCard(

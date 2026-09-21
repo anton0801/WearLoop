@@ -116,7 +116,7 @@ struct OutfitDetailsView: View {
     private func accentFor(_ status: OutfitStatus) -> Color {
         switch status {
         case .ready: return Palette.success
-        case .partlyUnavailable: return Palette.berry
+        case .partlyUnavailable: return Palette.burgundy
         case .outOfSeason: return Palette.amber
         case .needsRepair: return Palette.danger
         }
@@ -125,7 +125,7 @@ struct OutfitDetailsView: View {
     private func noteColour(_ note: String) -> Color {
         if note.hasPrefix("All pieces") { return Palette.success }
         if note.contains("wash") || note.contains("repair") || note.contains("archived") || note.contains("stored") {
-            return Palette.berry
+            return Palette.burgundy
         }
         return Palette.amber
     }
@@ -208,13 +208,13 @@ struct OutfitDetailsView: View {
     private func plannedSection(_ state: OutfitDetailsViewState) -> some View {
         if !state.plannedDates.isEmpty || !state.usedInTrips.isEmpty {
             ScreenBlock(spacing: 10) {
-                SectionHeader("planned for", accent: Palette.berry)
+                SectionHeader("planned for", accent: Palette.burgundy)
                 VStack(spacing: 8) {
                     ForEach(state.plannedDates, id: \.self) { entry in
                         InlineNotice(text: entry.capitalizedFirst, icon: "calendar")
                     }
                     ForEach(state.usedInTrips, id: \.self) { entry in
-                        InlineNotice(text: entry, icon: "suitcase.fill", colour: Palette.berry)
+                        InlineNotice(text: entry, icon: "suitcase.fill", colour: Palette.burgundy)
                     }
                 }
             }
@@ -252,7 +252,7 @@ struct OutfitDetailsView: View {
                         }
                         .padding(14)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Palette.surface))
+                        .background(PlateBackground(cornerRadius: 14))
                     }
                 }
             }

@@ -11,7 +11,7 @@ struct InsightsView: View {
     var body: some View {
         ScreenScaffold {
             ScreenBlock(spacing: 10) {
-                ScreenHeader("insights", subtitle: presenter.viewState.summaryText)
+                ScreenHeader("insights", subtitle: presenter.viewState.summaryText, artwork: .insights)
             }
 
             if !presenter.viewState.hasPieces {
@@ -44,7 +44,7 @@ struct InsightsView: View {
     private var lockedBanner: some View {
         ScreenBlock {
             VStack(alignment: .leading, spacing: 14) {
-                SectionHeader("more wear records needed", accent: Palette.berry)
+                SectionHeader("more wear records needed", accent: Palette.burgundy)
                 Text(presenter.viewState.lockMessage)
                     .font(TypeScale.body)
                     .foregroundStyle(Palette.anchor.opacity(0.75))
@@ -60,11 +60,11 @@ struct InsightsView: View {
             .padding(20)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
-                RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous)
-                    .fill(Palette.surface)
+                PlateBackground(cornerRadius: Metrics.cardRadius)
                     .halftoneBacking(
                         enabled: presenter.viewState.showHalftone,
-                        opacity: 0.2,
+                        colour: Palette.gold,
+                        opacity: 0.22,
                         focus: .topTrailing,
                         spacing: 30
                     )
@@ -116,10 +116,7 @@ struct InsightsView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(18)
-            .background(
-                RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous)
-                    .fill(Palette.surface)
-            )
+            .background(PlateBackground(cornerRadius: Metrics.cardRadius))
             .contentShape(RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous))
         }
         .buttonStyle(CardPressStyle())
@@ -129,7 +126,7 @@ struct InsightsView: View {
 
     private func barColour(_ kind: InsightKind) -> Color {
         switch kind {
-        case .neverWorn, .boughtNeverUsed, .repairBacklog: return Palette.berry
+        case .neverWorn, .boughtNeverUsed, .repairBacklog: return Palette.burgundy
         case .packingAccuracy, .wardrobeInRotation: return Palette.success
         default: return Palette.amber
         }
@@ -227,7 +224,7 @@ struct InsightDetailView: View {
         }
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Palette.surface))
+        .background(PlateBackground(cornerRadius: 14))
     }
 
     @ViewBuilder

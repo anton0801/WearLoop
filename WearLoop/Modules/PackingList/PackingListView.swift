@@ -55,7 +55,7 @@ struct PackingListView: View {
     private func content(_ state: PackingListViewState) -> some View {
         ScreenScaffold {
             ScreenBlock(spacing: 10) {
-                ScreenHeader("packing list", subtitle: "\(state.tripName) · \(state.weightText) in the bag")
+                ScreenHeader("packing list", subtitle: "\(state.tripName) · \(state.weightText) in the bag", artwork: .packing)
             }
 
             SegmentBar(items: presenter.segmentItems(), selection: $presenter.section)
@@ -169,7 +169,7 @@ struct PackingListView: View {
                 if let unavailable = row.unavailableText {
                     Text(unavailable)
                         .font(TypeScale.captionSmall)
-                        .foregroundStyle(Palette.berry)
+                        .foregroundStyle(Palette.burgundy)
                         .lineLimit(1)
                 }
             }
@@ -195,7 +195,7 @@ struct PackingListView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .strokeBorder(row.isUnavailable ? Palette.berry.opacity(0.6) : .clear, lineWidth: 2)
+                .strokeBorder(row.isUnavailable ? Palette.burgundy.opacity(0.6) : .clear, lineWidth: 2)
         )
         .contextMenu {
             Button { presenter.didTapWhy(row) } label: {
@@ -361,7 +361,7 @@ struct WhyIsThisHereSheet: View {
                         }
                         if let unavailable = row.unavailableText {
                             Divider().overlay(Palette.anchor.opacity(0.1))
-                            FactRow(label: "Availability", value: unavailable, valueColour: Palette.berry)
+                            FactRow(label: "Availability", value: unavailable, valueColour: Palette.burgundy)
                         }
                     }
 

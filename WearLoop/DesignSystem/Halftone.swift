@@ -10,7 +10,7 @@
 import SwiftUI
 
 struct HalftoneBackground: View {
-    var colour: Color = Palette.amber
+    var colour: Color = Palette.gold
     var opacity: Double = 0.2
     /// Distance between dot centres.
     var spacing: CGFloat = 26
@@ -78,7 +78,7 @@ extension View {
     /// shape of a block, never to the content itself.
     func halftoneBacking(
         enabled: Bool = true,
-        colour: Color = Palette.amber,
+        colour: Color = Palette.gold,
         opacity: Double = 0.2,
         focus: UnitPoint = .center,
         spacing: CGFloat = 26

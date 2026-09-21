@@ -7,112 +7,132 @@ import SwiftUI
 
 struct OnboardingView: View {
     @StateObject var presenter: OnboardingPresenter
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
-        ZStack {
-            Palette.background.ignoresSafeArea()
+        GeometryReader { geometry in
+            ZStack {
+                Color(hex: "#18070B").ignoresSafeArea()
+                CoinOnboardingBackdrop(page: presenter.viewState.index)
+                    .ignoresSafeArea()
 
-            VStack(alignment: .leading, spacing: 0) {
-                header
-                content
-                Spacer(minLength: 0)
-                controls
+                VStack(spacing: 0) {
+                    header
+                    content(heroHeight: min(max(geometry.size.height * 0.24, 90), 340))
+                    controls
+                }
+                .frame(maxWidth: 680)
+                .frame(maxWidth: .infinity)
             }
         }
         .onAppear { presenter.onAppear() }
     }
-
-    // MARK: Header
 
     private var header: some View {
         HStack {
             Text("wear loop")
                 .font(.system(size: 20, weight: .black))
                 .tracking(-1)
-                .foregroundStyle(Palette.anchor)
+                .foregroundStyle(Palette.gold)
+                .shadow(color: .black.opacity(0.8), radius: 4)
             Spacer()
             Button("Skip") { presenter.didTapSkip() }
-                .buttonStyle(CompactOutlineButtonStyle())
+                .buttonStyle(CompactOutlineButtonStyle(stroke: Palette.gold))
+                .frame(minHeight: 44)
                 .accessibilityHint("Skips the introduction and goes to setup")
         }
         .padding(.horizontal, Metrics.screenPadding)
         .padding(.top, 8)
-        .padding(.bottom, 20)
+        .padding(.bottom, 8)
     }
 
-    // MARK: Page
-
-    private var content: some View {
+    private func content(heroHeight: CGFloat) -> some View {
         ScrollView(.vertical, showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 22) {
+            VStack(spacing: 0) {
+                // Flexible artwork space scrolls away on short or landscape screens.
+                Color.clear
+                    .frame(height: heroHeight)
+                    .accessibilityHidden(true)
+
                 if let page = presenter.viewState.current {
-                    ScreenHeader(page.title)
-                        .id(page.id)
+                    VStack(alignment: .leading, spacing: 18) {
+                        ScreenHeader(page.title)
+                            .id(page.id)
 
-                    Text(page.body)
-                        .font(TypeScale.body)
-                        .foregroundStyle(Palette.anchor.opacity(0.75))
-                        .fixedSize(horizontal: false, vertical: true)
+                        Text(page.body)
+                            .font(TypeScale.body)
+                            .foregroundStyle(Palette.anchor.opacity(0.8))
+                            .fixedSize(horizontal: false, vertical: true)
 
-                    VStack(alignment: .leading, spacing: 12) {
-                        ForEach(Array(page.points.enumerated()), id: \.offset) { _, point in
-                            HStack(alignment: .top, spacing: 10) {
-                                Circle()
-                                    .fill(Palette.amber)
-                                    .frame(width: 10, height: 10)
-                                    .padding(.top, 6)
-                                Text(point)
-                                    .font(TypeScale.body)
-                                    .foregroundStyle(Palette.anchor)
-                                    .fixedSize(horizontal: false, vertical: true)
-                                Spacer(minLength: 0)
+                        VStack(alignment: .leading, spacing: 12) {
+                            ForEach(Array(page.points.enumerated()), id: \.offset) { _, point in
+                                HStack(alignment: .top, spacing: 10) {
+                                    Image(systemName: "sparkle")
+                                        .font(.system(size: 12, weight: .bold))
+                                        .foregroundStyle(Palette.burgundy)
+                                        .frame(width: 14)
+                                        .padding(.top, 4)
+                                        .accessibilityHidden(true)
+                                    Text(point)
+                                        .font(TypeScale.body)
+                                        .foregroundStyle(Palette.anchor)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                    Spacer(minLength: 0)
+                                }
                             }
                         }
                     }
-                    .padding(18)
+                    .padding(20)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(
-                        RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous)
+                    .background {
+                        RoundedRectangle(cornerRadius: 24, style: .continuous)
                             .fill(Palette.surface)
-                            .halftoneBacking(opacity: 0.18, focus: .bottomTrailing, spacing: 30)
-                            .clipShape(RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous))
-                    )
+                            .overlay {
+                                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                                    .fill(Palette.plateFace)
+                            }
+                            .overlay {
+                                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                                    .strokeBorder(Palette.medallionRim, lineWidth: 2)
+                            }
+                    }
+                    .padding(.horizontal, Metrics.screenPadding)
+                    .padding(.bottom, 12)
                 }
             }
-            .padding(.horizontal, Metrics.screenPadding)
-            .animation(Motion.standard, value: presenter.viewState.index)
+            .animation(Motion.respecting(reduceMotion, Motion.standard), value: presenter.viewState.index)
         }
     }
 
-    // MARK: Controls
-
     private var controls: some View {
-        VStack(spacing: 14) {
-            // Page dots double as a way to jump between pages.
-            HStack(spacing: 8) {
+        VStack(spacing: 6) {
+            HStack(spacing: 0) {
                 ForEach(presenter.viewState.pages) { page in
                     Button {
                         presenter.didSelectPage(page.id)
                     } label: {
                         Capsule()
-                            .fill(page.id == presenter.viewState.index ? Palette.anchor : Palette.anchor.opacity(0.2))
-                            .frame(width: page.id == presenter.viewState.index ? 28 : 10, height: 10)
-                            .animation(Motion.segment, value: presenter.viewState.index)
+                            .fill(page.id == presenter.viewState.index ? Palette.gold : Color.white.opacity(0.4))
+                            .frame(width: page.id == presenter.viewState.index ? 28 : 10, height: 8)
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
+                            .animation(Motion.respecting(reduceMotion, Motion.segment), value: presenter.viewState.index)
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("Page \(page.id + 1), \(page.title)")
+                    .accessibilityAddTraits(page.id == presenter.viewState.index ? .isSelected : [])
                 }
-                Spacer()
+                Spacer(minLength: 0)
                 Text(presenter.viewState.progressText)
                     .font(TypeScale.captionSmall)
                     .monospacedDigit()
-                    .foregroundStyle(Palette.anchor.opacity(0.5))
+                    .foregroundStyle(Color.white.opacity(0.8))
             }
 
             HStack(spacing: 10) {
                 if presenter.viewState.index > 0 {
                     SecondaryButton(title: "Back") { presenter.didTapBack() }
-                        .frame(width: 120)
+                        .frame(maxWidth: 120)
                 }
                 PrimaryButton(
                     title: presenter.viewState.isLast ? "Start Setup" : "Continue"
@@ -122,7 +142,11 @@ struct OnboardingView: View {
             }
         }
         .padding(.horizontal, Metrics.screenPadding)
-        .padding(.bottom, 20)
-        .padding(.top, 16)
+        .padding(.bottom, 16)
+        .padding(.top, 4)
+        .background {
+            Color(hex: "#18070B").opacity(0.96)
+                .ignoresSafeArea(edges: .bottom)
+        }
     }
 }

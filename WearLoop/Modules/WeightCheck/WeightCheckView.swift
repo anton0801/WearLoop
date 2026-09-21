@@ -42,7 +42,7 @@ struct WeightCheckView: View {
     private func content(_ state: WeightCheckViewState) -> some View {
         ScreenScaffold {
             ScreenBlock(spacing: 10) {
-                ScreenHeader("weight check", subtitle: state.tripName)
+                ScreenHeader("weight check", subtitle: state.tripName, artwork: .weight)
             }
 
             gauge(state)
@@ -78,7 +78,7 @@ struct WeightCheckView: View {
                         isCompact: true
                     )
                     if let value = state.estimatedValueText {
-                        BigNumber(value: value, label: "estimated value", colour: Palette.berry, isCompact: true)
+                        BigNumber(value: value, label: "estimated value", colour: Palette.burgundy, isCompact: true)
                     }
                 }
                 Spacer(minLength: 0)
@@ -144,9 +144,7 @@ struct WeightCheckView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(14)
-                    .background(
-                        RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Palette.surface)
-                    )
+                    .background(PlateBackground(cornerRadius: 14))
                 }
             }
         }
@@ -199,7 +197,7 @@ struct WeightCheckView: View {
                     }
                     .padding(14)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Palette.surface))
+                    .background(PlateBackground(cornerRadius: 14))
                     .contextMenu {
                         if line.pieceID != nil {
                             Button { presenter.didTapRemoveLine(line) } label: {
@@ -267,9 +265,7 @@ struct RefineWeightsSheet: View {
                                 )
                             }
                             .padding(14)
-                            .background(
-                                RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Palette.surface)
-                            )
+                            .background(PlateBackground(cornerRadius: 14))
                         }
 
                         if let onOpenCategoryWeights {

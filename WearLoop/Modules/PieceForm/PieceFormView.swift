@@ -20,7 +20,8 @@ struct PieceFormView: View {
                     presenter.viewState.title,
                     subtitle: presenter.viewState.isEditing
                         ? "Status and lifecycle are changed from the piece's own screen."
-                        : "Name, category, colour, season and occasion are required."
+                        : "Name, category, colour, season and occasion are required.",
+                    artwork: .camera
                 )
             }
 
@@ -159,7 +160,7 @@ struct PieceFormView: View {
             ChipGroup(
                 values: Occasion.allCases,
                 title: { $0.title },
-                accent: Palette.berry,
+                accent: Palette.burgundy,
                 isSelected: { presenter.viewState.occasions.contains($0) },
                 onTap: { presenter.toggleOccasion($0) }
             )

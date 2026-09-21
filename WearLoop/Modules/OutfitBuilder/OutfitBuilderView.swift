@@ -65,7 +65,7 @@ struct OutfitBuilderView: View {
                     ForEach(Array(presenter.viewState.checkNotes.enumerated()), id: \.offset) { _, note in
                         HStack(alignment: .top, spacing: 8) {
                             Circle()
-                                .fill(note.hasPrefix("All pieces") ? Palette.success : Palette.berry)
+                                .fill(note.hasPrefix("All pieces") ? Palette.success : Palette.burgundy)
                                 .frame(width: 6, height: 6)
                                 .padding(.top, 7)
                             Text(note)
@@ -185,7 +185,7 @@ struct OutfitBuilderView: View {
                 ChipGroup(
                     values: Occasion.allCases,
                     title: { $0.title },
-                    accent: Palette.berry,
+                    accent: Palette.burgundy,
                     isSelected: { $0 == presenter.viewState.occasion },
                     onTap: { presenter.setOccasion($0) }
                 )
@@ -333,7 +333,7 @@ struct PiecePickerSheet: View {
                     }
                     .padding(.horizontal, 14)
                     .frame(height: 48)
-                    .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Palette.surface))
+                    .background(PlateBackground(cornerRadius: 14))
                     .overlay(
                         RoundedRectangle(cornerRadius: 14, style: .continuous)
                             .strokeBorder(Palette.anchor.opacity(0.2), lineWidth: 2)

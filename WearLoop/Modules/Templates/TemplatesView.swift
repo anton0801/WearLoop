@@ -11,7 +11,7 @@ struct TemplatesView: View {
     var body: some View {
         ScreenScaffold {
             ScreenBlock(spacing: 10) {
-                ScreenHeader("my templates", subtitle: presenter.viewState.summaryText)
+                ScreenHeader("my templates", subtitle: presenter.viewState.summaryText, artwork: .templates)
             }
 
             if presenter.viewState.items.isEmpty {
@@ -68,7 +68,7 @@ struct TemplatesView: View {
                     if item.availability.isFullyAvailable {
                         StatusTag(text: "READY", fill: Palette.success)
                     } else {
-                        StatusTag(text: "CHECK", fill: Palette.berry)
+                        StatusTag(text: "CHECK", fill: Palette.burgundy)
                     }
                 }
 
@@ -148,7 +148,7 @@ struct ApplyTemplateSheet: View {
                             if showsMissing {
                                 VStack(alignment: .leading, spacing: 8) {
                                     ForEach(missingRows, id: \.self) { row in
-                                        InlineNotice(text: row, icon: "exclamationmark.circle", colour: Palette.berry)
+                                        InlineNotice(text: row, icon: "exclamationmark.circle", colour: Palette.burgundy)
                                     }
                                 }
                             }
@@ -175,17 +175,14 @@ struct ApplyTemplateSheet: View {
                                             }
                                             Spacer(minLength: 8)
                                             Image(systemName: selectedTripID == trip.id ? "largecircle.fill.circle" : "circle")
-                                                .foregroundStyle(selectedTripID == trip.id ? Palette.berry : Palette.anchor.opacity(0.3))
+                                                .foregroundStyle(selectedTripID == trip.id ? Palette.burgundy : Palette.anchor.opacity(0.3))
                                         }
                                         .padding(14)
                                         .frame(maxWidth: .infinity, alignment: .leading)
-                                        .background(
-                                            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                                .fill(Palette.surface)
-                                        )
+                                        .background(PlateBackground(cornerRadius: 14))
                                         .overlay(
                                             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                                .strokeBorder(selectedTripID == trip.id ? Palette.berry : .clear, lineWidth: 2)
+                                                .strokeBorder(selectedTripID == trip.id ? Palette.burgundy : .clear, lineWidth: 2)
                                         )
                                     }
                                     .buttonStyle(.plain)

@@ -32,6 +32,8 @@ struct RootView: View {
                 loadedContent
             }
         }
+        // Keep system chrome readable over the dark onboarding artwork.
+        .preferredColorScheme(store.state.hasSeenOnboarding ? .light : .dark)
         .animation(Motion.standard, value: store.loadStateValue)
         .task {
             if case .loading = store.loadStateValue {

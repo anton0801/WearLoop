@@ -2,7 +2,8 @@
 //  Buttons.swift
 //  WearLoop
 //
-//  Primary amber, secondary outlined. No shadows. Press shrinks to 96%.
+//  Primary amber and struck like metal, carrying a dense shadow so it sits
+//  proud of the plate beneath it. Pressing sinks it and shrinks it to 96%.
 //
 
 import SwiftUI
@@ -17,19 +18,43 @@ struct PrimaryButtonStyle: ButtonStyle {
     var fullWidth: Bool = true
 
     func makeBody(configuration: Configuration) -> some View {
-        configuration.label
+        let shape = RoundedRectangle(cornerRadius: Metrics.buttonRadius, style: .continuous)
+        let pressed = configuration.isPressed && isEnabled
+
+        return configuration.label
             .font(TypeScale.button)
             .foregroundStyle(isEnabled ? textColour : textColour.opacity(0.45))
             .frame(maxWidth: fullWidth ? .infinity : nil)
             .frame(height: Metrics.buttonHeight)
             .padding(.horizontal, fullWidth ? 0 : 24)
             .background(
-                RoundedRectangle(cornerRadius: Metrics.buttonRadius, style: .continuous)
+                // The shadow lives on the plate, not on the button as a whole:
+                // shadowing the whole button would ghost the lettering too.
+                shape
                     .fill(isEnabled ? fill : fill.opacity(0.35))
+                    .overlay(shape.fill(Metal.sheen))
+                    .overlay(
+                        // A bright edge along the top, as on struck metal.
+                        shape.strokeBorder(Color.white.opacity(isEnabled ? 0.35 : 0.15), lineWidth: 1)
+                    )
+                    // Dense: tight and solid, so the button sits proud of the
+                    // plate and sinks into it when pressed.
+                    .shadow(
+                        color: Palette.anchor.opacity(isEnabled ? 0.30 : 0),
+                        radius: Metrics.buttonShadowRadius,
+                        x: 0,
+                        y: pressed ? 1 : Metrics.buttonShadowOffset
+                    )
+                    .shadow(
+                        color: Palette.anchor.opacity(isEnabled ? 0.16 : 0),
+                        radius: pressed ? 3 : 9,
+                        x: 0,
+                        y: pressed ? 1 : 5
+                    )
             )
-            .scaleEffect(configuration.isPressed && isEnabled ? 0.96 : 1)
+            .scaleEffect(pressed ? 0.96 : 1)
             .animation(Motion.buttonPress, value: configuration.isPressed)
-            .contentShape(RoundedRectangle(cornerRadius: Metrics.buttonRadius, style: .continuous))
+            .contentShape(shape)
     }
 }
 
@@ -49,8 +74,12 @@ struct SecondaryButtonStyle: ButtonStyle {
             .frame(height: Metrics.buttonHeight)
             .padding(.horizontal, fullWidth ? 0 : 24)
             .background(
-                RoundedRectangle(cornerRadius: Metrics.buttonRadius, style: .continuous)
-                    .fill(fillColour)
+                PlateBackground(cornerRadius: Metrics.buttonRadius, isRaised: false)
+                    .opacity(fillColour == Palette.surface ? 1 : 0)
+                    .background(
+                        RoundedRectangle(cornerRadius: Metrics.buttonRadius, style: .continuous)
+                            .fill(fillColour)
+                    )
             )
             .overlay(
                 RoundedRectangle(cornerRadius: Metrics.buttonRadius, style: .continuous)
@@ -77,6 +106,8 @@ struct CompactButtonStyle: ButtonStyle {
             .background(
                 Capsule(style: .continuous)
                     .fill(isEnabled ? fill : fill.opacity(0.35))
+                    .overlay(Capsule(style: .continuous).fill(Metal.sheen))
+                    .shadow(color: Palette.anchor.opacity(isEnabled ? 0.22 : 0), radius: 0, y: 2)
             )
             .scaleEffect(configuration.isPressed && isEnabled ? 0.96 : 1)
             .animation(Motion.buttonPress, value: configuration.isPressed)

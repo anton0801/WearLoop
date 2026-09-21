@@ -17,7 +17,6 @@ struct WearLoopApp: App {
             RootView(dependencies: dependencies)
                 .environmentObject(dependencies)
                 .environmentObject(dependencies.store)
-                .preferredColorScheme(.light)
                 .tint(Palette.anchor)
         }
         .onChange(of: scenePhase) { _, phase in

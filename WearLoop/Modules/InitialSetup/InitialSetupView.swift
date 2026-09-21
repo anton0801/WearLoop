@@ -107,7 +107,7 @@ struct InitialSetupView: View {
             ChipGroup(
                 values: Occasion.allCases,
                 title: { $0.title },
-                accent: Palette.berry,
+                accent: Palette.burgundy,
                 isSelected: { presenter.viewState.occasions.contains($0) },
                 onTap: { presenter.toggleOccasion($0) }
             )

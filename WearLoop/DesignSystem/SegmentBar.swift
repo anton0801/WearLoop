@@ -189,7 +189,7 @@ struct StageIndicator: View {
             .frame(height: 32)
             .background(
                 Capsule(style: .continuous)
-                    .fill(isCurrent ? Palette.berry : (isDone ? Palette.amber.opacity(0.35) : (isDark ? colours.card : Palette.surface)))
+                    .fill(isCurrent ? Palette.burgundy : (isDone ? Palette.amber.opacity(0.35) : (isDark ? colours.card : Palette.surface)))
             )
             .overlay(
                 Capsule(style: .continuous)

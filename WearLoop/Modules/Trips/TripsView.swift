@@ -11,7 +11,7 @@ struct TripsView: View {
     var body: some View {
         ScreenScaffold {
             ScreenBlock(spacing: 10) {
-                ScreenHeader("trips", subtitle: presenter.viewState.summaryText) {
+                ScreenHeader("trips", subtitle: presenter.viewState.summaryText, artwork: .trips) {
                     Button {
                         presenter.didTapCreate()
                     } label: {
@@ -145,11 +145,11 @@ struct TripsView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(18)
             .background(
-                RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous)
-                    .fill(Palette.surface)
+                PlateBackground(cornerRadius: Metrics.cardRadius)
                     .halftoneBacking(
                         enabled: presenter.viewState.showHalftone,
-                        opacity: 0.14,
+                        colour: Palette.gold,
+                        opacity: 0.18,
                         focus: .topTrailing,
                         spacing: 28
                     )
@@ -181,7 +181,7 @@ struct TripsView: View {
             text = "DRAFT"; colour = Palette.anchor
         } else {
             switch item.phase {
-            case .inProgress: text = "IN PROGRESS"; colour = Palette.berry
+            case .inProgress: text = "IN PROGRESS"; colour = Palette.burgundy
             case .completed: text = "COMPLETED"; colour = Palette.success
             case .upcoming: text = "UPCOMING"; colour = Palette.amber
             }
@@ -224,7 +224,7 @@ struct TripsView: View {
                         title: template.name,
                         subtitle: "\(template.tripType.title) · \(Plural.count(template.dayCount, "day")) · \(Plural.count(template.pieceIDs.count, "piece"))",
                         icon: "doc.on.doc",
-                        accent: Palette.berry
+                        accent: Palette.burgundy
                     ) {
                         presenter.didTapTemplates()
                     }

@@ -78,7 +78,7 @@ struct TripWorkspaceView: View {
 
     private func summary(_ state: TripWorkspaceViewState) -> some View {
         ScreenBlock(spacing: 14) {
-            SectionHeader("trip progress", accent: Palette.berry)
+            SectionHeader("trip progress", accent: Palette.burgundy)
 
             HStack(alignment: .top, spacing: 20) {
                 VStack(alignment: .leading, spacing: 14) {
@@ -104,12 +104,21 @@ struct TripWorkspaceView: View {
                 )
             }
 
-            CountProgress(
-                passed: state.readiness.passedCount,
-                total: state.readiness.totalCount,
-                label: "checks passed",
-                fill: state.readiness.isReady ? Palette.success : Palette.amber
-            )
+            HStack(alignment: .center, spacing: 16) {
+                CountMedallion(
+                    passed: state.readiness.passedCount,
+                    total: state.readiness.totalCount,
+                    label: "checks",
+                    diameter: 108
+                )
+                Text(state.readiness.isReady
+                     ? "Every check has passed."
+                     : "\(Plural.count(state.readiness.outstanding.count, "check")) still to clear.")
+                    .font(TypeScale.caption)
+                    .foregroundStyle(Palette.anchor.opacity(0.7))
+                    .fixedSize(horizontal: false, vertical: true)
+                Spacer(minLength: 0)
+            }
         }
     }
 
@@ -124,7 +133,7 @@ struct TripWorkspaceView: View {
                         message: text,
                         primaryTitle: "Open the Day Plan",
                         primaryAction: { presenter.didTapDayPlan() },
-                        tint: Palette.berry
+                        tint: Palette.burgundy
                     )
                 }
                 if !state.outsideConditionOutfits.isEmpty {
@@ -149,7 +158,7 @@ struct TripWorkspaceView: View {
                 title: "Day Plan",
                 subtitle: "\(state.coverage.daysCovered) covered · \(state.coverage.daysUndecided) undecided · \(state.coverage.daysWithoutPlan) open",
                 icon: "calendar",
-                accent: Palette.berry
+                accent: Palette.burgundy
             ) {
                 presenter.didTapDayPlan()
             }

@@ -82,15 +82,12 @@ struct HowItWorksView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(18)
-                    .background(
-                        RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous)
-                            .fill(Palette.surface)
-                    )
+                    .background(PlateBackground(cornerRadius: Metrics.cardRadius))
                 }
             }
 
             ScreenBlock(spacing: 10) {
-                SectionHeader("what it does not do", accent: Palette.berry)
+                SectionHeader("what it does not do", accent: Palette.burgundy)
                 Panel {
                     bullet("It never marks anything as worn for you.")
                     bullet("It never deletes or retires a piece on its own.")
@@ -113,7 +110,7 @@ struct HowItWorksView: View {
     private func bullet(_ text: String) -> some View {
         HStack(alignment: .top, spacing: 8) {
             Circle()
-                .fill(Palette.berry)
+                .fill(Palette.burgundy)
                 .frame(width: 6, height: 6)
                 .padding(.top, 7)
             Text(text)

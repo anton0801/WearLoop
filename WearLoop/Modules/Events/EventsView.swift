@@ -11,7 +11,7 @@ struct EventsView: View {
     var body: some View {
         ScreenScaffold {
             ScreenBlock(spacing: 10) {
-                ScreenHeader("events", subtitle: presenter.viewState.summaryText) {
+                ScreenHeader("events", subtitle: presenter.viewState.summaryText, artwork: .events) {
                     Button {
                         presenter.didTapCreate()
                     } label: {
@@ -85,7 +85,7 @@ struct EventsView: View {
                     if item.isWorn {
                         StatusTag(text: "WORN", fill: Palette.success)
                     } else if !item.hasOutfit {
-                        StatusTag(text: "NO OUTFIT", fill: Palette.berry)
+                        StatusTag(text: "NO OUTFIT", fill: Palette.burgundy)
                     }
                 }
 
@@ -121,7 +121,7 @@ struct EventsView: View {
                         Spacer(minLength: 0)
                     }
                 } else {
-                    InlineNotice(text: "No outfit assigned yet.", icon: "exclamationmark.circle", colour: Palette.berry)
+                    InlineNotice(text: "No outfit assigned yet.", icon: "exclamationmark.circle", colour: Palette.burgundy)
                 }
 
                 if let warning = item.warning {
@@ -134,10 +134,7 @@ struct EventsView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(18)
-            .background(
-                RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous)
-                    .fill(Palette.surface)
-            )
+            .background(PlateBackground(cornerRadius: Metrics.cardRadius))
             .contentShape(RoundedRectangle(cornerRadius: Metrics.cardRadius, style: .continuous))
         }
         .buttonStyle(CardPressStyle())

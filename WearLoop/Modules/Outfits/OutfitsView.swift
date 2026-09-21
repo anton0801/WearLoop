@@ -11,7 +11,7 @@ struct OutfitsView: View {
     var body: some View {
         ScreenScaffold {
             ScreenBlock(spacing: 10) {
-                ScreenHeader("outfits", subtitle: presenter.viewState.summaryText) {
+                ScreenHeader("outfits", subtitle: presenter.viewState.summaryText, artwork: .outfits) {
                     Button {
                         presenter.didTapBuild()
                     } label: {
@@ -58,7 +58,7 @@ struct OutfitsView: View {
         }
         .padding(.horizontal, 14)
         .frame(height: 48)
-        .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Palette.surface))
+        .background(PlateBackground(cornerRadius: 14))
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .strokeBorder(Palette.anchor.opacity(0.2), lineWidth: 2)
@@ -110,7 +110,7 @@ struct OutfitsView: View {
                 ForEach(presenter.viewState.groups) { group in
                     RailSection(
                         title: group.title,
-                        accent: Palette.berry,
+                        accent: Palette.burgundy,
                         items: group.items
                     ) { item in
                         OutfitCard(

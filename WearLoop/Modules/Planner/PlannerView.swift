@@ -12,7 +12,7 @@ struct PlannerView: View {
     var body: some View {
         ScreenScaffold {
             ScreenBlock(spacing: 10) {
-                ScreenHeader("plan a day", subtitle: "Two weeks ahead. Assigning is not the same as wearing.")
+                ScreenHeader("plan a day", subtitle: "Two weeks ahead. Assigning is not the same as wearing.", artwork: .planner)
             }
 
             calendar
@@ -88,7 +88,7 @@ struct PlannerView: View {
                     .foregroundStyle(Palette.anchor.opacity(0.55))
             }
             if let event = presenter.viewState.eventName {
-                InlineNotice(text: "Event this day: \(event)", icon: "star.fill", colour: Palette.berry)
+                InlineNotice(text: "Event this day: \(event)", icon: "star.fill", colour: Palette.burgundy)
                 TextButton(title: "Open events") { presenter.didTapEvents() }
             }
             if presenter.viewState.isPast && !presenter.viewState.isWorn {
@@ -105,7 +105,7 @@ struct PlannerView: View {
             ChipGroup(
                 values: Occasion.allCases,
                 title: { $0.title },
-                accent: Palette.berry,
+                accent: Palette.burgundy,
                 isSelected: { $0 == presenter.viewState.occasion },
                 onTap: { occasion in
                     presenter.didSetOccasion(presenter.viewState.occasion == occasion ? nil : occasion)
@@ -187,7 +187,7 @@ struct PlannerView: View {
                 }
 
                 if let note = presenter.viewState.availabilityNote {
-                    WarningPanel(message: note, tint: Palette.berry)
+                    WarningPanel(message: note, tint: Palette.burgundy)
                 }
 
                 if presenter.showsWeatherWarning {
@@ -207,7 +207,7 @@ struct PlannerView: View {
                             primaryAction: { presenter.didTapAssign() },
                             secondaryTitle: "Keep Anyway",
                             secondaryAction: { presenter.didTapKeepAnyway() },
-                            tint: Palette.berry
+                            tint: Palette.burgundy
                         )
                     }
                 }
@@ -220,7 +220,7 @@ struct PlannerView: View {
                 if let backup = presenter.viewState.backupOutfit {
                     FactRow(label: "Backup Outfit", value: backup.name)
                         .padding(14)
-                        .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Palette.surface))
+                        .background(PlateBackground(cornerRadius: 14))
                     TextButton(title: "Change backup") { presenter.didTapAssignBackup() }
                 } else {
                     SecondaryButton(title: "Add a Backup Outfit") { presenter.didTapAssignBackup() }
@@ -319,7 +319,7 @@ struct OutfitPickerSheet: View {
                     }
                     .padding(.horizontal, 14)
                     .frame(height: 48)
-                    .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Palette.surface))
+                    .background(PlateBackground(cornerRadius: 14))
                     .overlay(
                         RoundedRectangle(cornerRadius: 14, style: .continuous)
                             .strokeBorder(Palette.anchor.opacity(0.2), lineWidth: 2)

@@ -16,7 +16,8 @@ struct SettingsView: View {
                     "settings",
                     subtitle: presenter.viewState.profile.greetingName.isEmpty
                         ? "Everything is stored on this device only."
-                        : "\(presenter.viewState.profile.greetingName) · stored on this device only"
+                        : "\(presenter.viewState.profile.greetingName) · stored on this device only",
+                    artwork: .settings
                 )
             }
 
@@ -93,7 +94,7 @@ struct SettingsView: View {
                     ? (presenter.viewState.notifications.anyEnabled ? "On" : "All reminders turned off")
                     : "Off",
                 icon: "bell",
-                accent: Palette.berry
+                accent: Palette.burgundy
             ) {
                 presenter.didTapNotifications()
             }
@@ -208,7 +209,7 @@ struct SettingsView: View {
                     FactRow(
                         label: "Unused Photographs",
                         value: "\(presenter.viewState.unusedPhotoCount)",
-                        valueColour: Palette.berry
+                        valueColour: Palette.burgundy
                     )
                 }
                 Divider().overlay(Palette.anchor.opacity(0.1))
@@ -391,7 +392,7 @@ struct EssentialsListView: View {
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Palette.surface))
+        .background(PlateBackground(cornerRadius: 14))
     }
 
     private func add() {

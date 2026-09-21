@@ -57,7 +57,7 @@ struct TripWizardView: View {
                         .frame(height: 32)
                         .background(
                             Capsule().fill(
-                                isCurrent ? Palette.berry : (isDone ? Palette.amber.opacity(0.35) : Palette.surface)
+                                isCurrent ? Palette.burgundy : (isDone ? Palette.amber.opacity(0.35) : Palette.surface)
                             )
                         )
                     }
@@ -141,7 +141,7 @@ struct TripWizardView: View {
                 ChipGroup(
                     values: TripType.allCases,
                     title: { $0.title },
-                    accent: Palette.berry,
+                    accent: Palette.burgundy,
                     isSelected: { $0 == presenter.viewState.type },
                     onTap: { presenter.setType($0) }
                 )
@@ -285,7 +285,7 @@ struct TripWizardView: View {
                 ChipGroup(
                     values: LuggageType.allCases,
                     title: { $0.title },
-                    accent: Palette.berry,
+                    accent: Palette.burgundy,
                     isSelected: { $0 == presenter.viewState.luggageType },
                     onTap: { presenter.setLuggageType($0) }
                 )
@@ -374,14 +374,14 @@ struct TripWizardView: View {
                     message: "\(Plural.days(presenter.viewState.daysWithoutOccasion.map(\.dayNumber))) have no occasion. You can still plan them, but the app has less to go on.",
                     primaryTitle: "Go to Days",
                     primaryAction: { presenter.didSelectStep(2) },
-                    tint: Palette.berry
+                    tint: Palette.burgundy
                 )
             }
 
             if !presenter.viewState.hasOutfits {
                 WarningPanel(
                     message: "You have no outfits yet. The packing list is built from outfits, so build at least one before packing.",
-                    tint: Palette.berry
+                    tint: Palette.burgundy
                 )
             }
 

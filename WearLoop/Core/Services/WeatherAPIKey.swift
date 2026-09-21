@@ -21,11 +21,6 @@ enum WeatherAPIKey {
 
     private static let hardcoded = "2255aeb9e4f7e3edc0195b0627ba2ff6"
 
-    /// The key actually used at run time.
-    ///
-    /// The constant above is checked first. If it is left empty, the key is
-    /// read from an `OpenWeatherMapAPIKey` entry in Info.plist instead, which
-    /// is handy if you would rather not keep the key in source control.
     static var value: String? {
         let trimmed = hardcoded.trimmingCharacters(in: .whitespacesAndNewlines)
         if !trimmed.isEmpty { return trimmed }

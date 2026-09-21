@@ -2,9 +2,16 @@
 //  Theme.swift
 //  WearLoop
 //
-//  Palette, type scale, metrics and motion. The one rule that overrides
-//  everything else: garment photographs are never tinted, darkened or
-//  recoloured. Accent colour lives in section headers, tags and underlines.
+//  Palette, type scale, metrics and motion.
+//
+//  The look is metallic gold: cream ground, graphite type, gold and amber for
+//  everything that carries value or energy, burgundy for anything negative and
+//  green reserved strictly for positive states. Surfaces read as layered,
+//  embossed gold plates; circular figures read as polished medallions.
+//
+//  The one rule that overrides all of it: garment photographs are never tinted,
+//  darkened or recoloured. Colour lives in the metal around them, never on the
+//  cloth.
 //
 
 import SwiftUI
@@ -12,19 +19,36 @@ import SwiftUI
 // MARK: - Palette
 
 enum Palette {
-    /// Page background.
-    static let background = Color(hex: "#FFF2D9")
-    /// Raised surfaces and secondary buttons.
-    static let surface = Color(hex: "#FFFBF1")
-    /// Text, segments and the plaque over photographs.
-    static let anchor = Color(hex: "#221E1A")
-    /// Active states and section headers.
-    static let amber = Color(hex: "#EFA829")
-    /// Outfits, trips and wear marks.
-    static let berry = Color(hex: "#A63A6B")
-    static let success = Color(hex: "#4E9A5B")
-    /// Over the luggage limit.
-    static let danger = Color(hex: "#C0392B")
+
+    // MARK: The six colours of the palette
+
+    /// Cream ground the whole app sits on.
+    static let background = Color(hex: "#FFF2D0")
+    /// Gold: underlines, rims, embossing and anything that should read as
+    /// valuable. Bright, so it always carries graphite text.
+    static let gold = Color(hex: "#FFD21F")
+    /// Amber: active states and the primary button. The energy of the palette.
+    static let amber = Color(hex: "#FF9418")
+    /// Graphite: type, segments and the plaque over photographs.
+    static let anchor = Color(hex: "#171717")
+    /// Deep burgundy: everything negative — over the limit, needing repair,
+    /// destructive actions — and the accent for trips and wear marks.
+    static let burgundy = Color(hex: "#8F1717")
+    /// Green is only ever allowed to mean "this is good".
+    static let success = Color(hex: "#45A94D")
+
+    // MARK: Derived
+
+    /// Raised plate face. Lifted out of the cream so a plate reads as sitting
+    /// above the ground rather than being cut out of it.
+    static let surface = Color(hex: "#FFF9E4")
+    /// The lighter edge of a plate, where the light catches it.
+    static let plateHighlight = Color(hex: "#FFFDF4")
+    /// The lower edge of a plate, in shadow.
+    static let plateShade = Color(hex: "#F2DFB2")
+
+    /// Negative states. The same burgundy, named for what it means.
+    static let danger = burgundy
 
     /// Anchor at reduced strength, for secondary text.
     static func anchorMuted(_ opacity: Double = 0.6) -> Color { anchor.opacity(opacity) }
@@ -32,8 +56,54 @@ enum Palette {
     /// The plaque that sits over the bottom of a photograph.
     static let plaque = anchor.opacity(0.85)
 
-    /// Text that reads on top of the anchor colour.
+    /// Text that reads on top of graphite, burgundy or green.
     static let onAnchor = Color.white
+    /// Text that reads on top of gold or amber.
+    static let onGold = anchor
+
+    // MARK: Metal
+
+    /// Face of an embossed plate, lit from above.
+    static let plateFace = LinearGradient(
+        colors: [plateHighlight, surface, plateShade.opacity(0.55)],
+        startPoint: .top,
+        endPoint: .bottom
+    )
+
+    /// A struck gold surface: bright at the top, deeper towards the bottom.
+    static let goldLeaf = LinearGradient(
+        colors: [
+            Color(hex: "#FFE47A"),
+            gold,
+            Color(hex: "#E9A800")
+        ],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
+
+    /// Amber with the same struck-metal treatment, for the primary button.
+    static let amberLeaf = LinearGradient(
+        colors: [
+            Color(hex: "#FFB454"),
+            amber,
+            Color(hex: "#E07400")
+        ],
+        startPoint: .top,
+        endPoint: .bottom
+    )
+
+    /// The rim of a medallion, catching light around its circumference.
+    static let medallionRim = AngularGradient(
+        colors: [
+            Color(hex: "#E9A800"),
+            Color(hex: "#FFE47A"),
+            gold,
+            Color(hex: "#C98F00"),
+            Color(hex: "#FFE47A"),
+            Color(hex: "#E9A800")
+        ],
+        center: .center
+    )
 }
 
 // MARK: - Typography
@@ -75,6 +145,17 @@ enum TypeScale {
 // MARK: - Metrics
 
 enum Metrics {
+    /// Depth of the drop shadow under an active button.
+    static let buttonShadowRadius: CGFloat = 0
+    static let buttonShadowOffset: CGFloat = 4
+    /// Depth under a raised plate.
+    static let plateShadowRadius: CGFloat = 10
+    static let plateShadowOffset: CGFloat = 4
+    /// Thickness of the embossed edge on a plate.
+    static let plateEdge: CGFloat = 1.5
+    /// Rim thickness of a circular medallion.
+    static let medallionRim: CGFloat = 6
+
     static let cardRadius: CGFloat = 18
     static let flatLayPieceRadius: CGFloat = 14
     static let buttonRadius: CGFloat = 18

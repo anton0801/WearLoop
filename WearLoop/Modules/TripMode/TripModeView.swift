@@ -130,7 +130,7 @@ struct TripModeView: View {
                                 Circle()
                                     .fill(day.isLogged ? Palette.amber : (state.useDarkMode ? colours.card : Palette.surface))
                                 if day.isCurrent {
-                                    Circle().strokeBorder(Palette.berry, lineWidth: 3)
+                                    Circle().strokeBorder(Palette.burgundy, lineWidth: 3)
                                 } else if day.isNotWorn {
                                     Circle().strokeBorder(colours.mutedText, lineWidth: 2)
                                 }
@@ -140,7 +140,7 @@ struct TripModeView: View {
                             }
                             .frame(width: Metrics.wearDayCircle, height: Metrics.wearDayCircle)
                             Circle()
-                                .fill(day.hasPlan ? Palette.berry.opacity(0.8) : Color.clear)
+                                .fill(day.hasPlan ? Palette.burgundy.opacity(0.8) : Color.clear)
                                 .frame(width: 5, height: 5)
                         }
                     }
@@ -185,7 +185,7 @@ struct TripModeView: View {
                     InlineNotice(
                         text: "This differs from the plan. The difference is kept for the recap.",
                         icon: "arrow.triangle.branch",
-                        colour: Palette.berry
+                        colour: Palette.burgundy
                     )
                 }
             }
@@ -260,7 +260,7 @@ struct TripModeView: View {
 
     private func extrasSection(_ state: TripModeViewState) -> some View {
         ScreenBlock(spacing: 10) {
-            SectionHeader("on the road", accent: Palette.berry)
+            SectionHeader("on the road", accent: Palette.burgundy)
 
             SecondaryButton(
                 title: "Add Unplanned Piece",
