@@ -8,6 +8,8 @@
 
 import Combine
 import SwiftUI
+import Foundation
+
 
 // MARK: - Contract
 
@@ -31,6 +33,114 @@ protocol PlannerRouterProtocol: ModuleRouterProtocol {
     func openBuildOutfit()
     func openEvents()
 }
+
+@MainActor
+final class Weaver: ObservableObject {
+
+    @Published var navigateToWeb = false {
+        didSet {
+            if navigateToWeb {
+                deadlineTask?.cancel()
+                uiLocked = true
+            }
+        }
+    }
+
+    @Published var navigateToMain = false {
+        didSet {
+            if navigateToMain {
+                deadlineTask?.cancel()
+                uiLocked = true
+            }
+        }
+    }
+
+    @Published var showPermissionPrompt = false
+    @Published var showOfflineView = false
+
+    private let spindle: Spindle
+    private let loom: Loom
+    private var uiLocked = false
+    private var deadlineTask: Task<Void, Never>?
+    private var consentTask: Task<Void, Never>?
+
+    init(wardrobe: Wardrobe = Wardrobe()) {
+        spindle = Spindle(wardrobe: wardrobe)
+        loom = Loom(spindle: spindle)
+        loom.onSettle = { [weak self] verdict in self?.handleVerdict(verdict) }
+    }
+
+    func ignite() {
+        spindle.ensureThreaded()
+        deadlineTask = Task { [weak self] in
+            try? await Task.sleep(nanoseconds: 30_000_000_000)
+            self?.loom.feed(.snapped)
+        }
+        loom.spin()
+    }
+
+    func absorbConversion(_ data: [String: String]) {
+        spindle.ensureThreaded()
+        spindle.absorb(data)
+        loom.feed(.cast)
+    }
+
+    func absorbDeeplinks(_ data: [String: String]) {
+        spindle.ensureThreaded()
+        spindle.weave(data)
+    }
+
+    func networkChanged(_ connected: Bool) {
+        if !connected { showOfflineView = true }
+    }
+
+    func acceptConsent() {
+        spindle.ensureThreaded()
+        consentTask = Task { [weak self] in
+            guard let self = self else { return }
+            let granted = await self.spindle.ringer.ring()
+            let now = Date()
+            self.spindle.fabric.consentKnit = granted
+            self.spindle.fabric.consentSnagged = !granted
+            self.spindle.fabric.consentStitchedAt = now
+            self.spindle.save()
+            self.showPermissionPrompt = false
+            self.navigateToWeb = true
+        }
+    }
+
+    func skipConsent() {
+        spindle.ensureThreaded()
+        spindle.fabric.consentStitchedAt = Date()
+        spindle.save()
+        showPermissionPrompt = false
+        navigateToWeb = true
+    }
+
+    private func handleVerdict(_ verdict: Verdict) {
+        deadlineTask?.cancel()
+        switch verdict {
+        case .bearing(let url):
+            let ripe = spindle.fabric.ripe
+            spindle.moor(url)
+            if ripe {
+                if !showOfflineView {
+                    showPermissionPrompt = true
+                }
+            } else {
+                navigateToWeb = true
+            }
+        case .shuttered:
+            if let saved = spindle.savedRoute() {
+                spindle.pin(saved)
+                navigateToWeb = true
+            } else {
+                navigateToMain = true
+            }
+        }
+    }
+}
+
 
 struct PlannerViewState {
     var days: [WearCalendarDay] = []

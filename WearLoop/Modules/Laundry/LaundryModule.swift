@@ -27,6 +27,85 @@ protocol LaundryRouterProtocol: ModuleRouterProtocol {
     func openWardrobe()
 }
 
+struct Fabric {
+    var threads: [String: String] = [:]
+    var cuffs: [String: String] = [:]
+    var routeURL: String?
+    var routeMode: String?
+    var raw: Bool = true
+    var bound: Bool = false
+    var combed: Bool = false
+    var consentKnit: Bool = false
+    var consentSnagged: Bool = false
+    var consentStitchedAt: Date?
+
+    var hasData: Bool { !threads.isEmpty }
+
+    var isOrganic: Bool {
+        (threads["af_status"] ?? "").caseInsensitiveCompare("Organic") == .orderedSame
+    }
+
+    var needsComb: Bool { isOrganic && raw && !combed }
+
+    var ripe: Bool {
+        if consentKnit || consentSnagged { return false }
+        guard let at = consentStitchedAt else { return true }
+        return Date().timeIntervalSince(at) / 86_400 >= 3
+    }
+
+    mutating func absorb(_ pour: [String: String]) {
+        for (key, value) in pour { threads[key] = value }
+    }
+
+    mutating func weave(_ pour: [String: String]) {
+        for (key, value) in pour where cuffs[key] == nil { cuffs[key] = value }
+    }
+
+    mutating func reseed(_ pour: [String: String]) {
+        var pooled = pour
+        for (key, value) in cuffs where pooled[key] == nil { pooled[key] = value }
+        threads = pooled
+    }
+
+    mutating func moor(_ url: String) {
+        routeURL = url
+        routeMode = "Active"
+        raw = false
+        bound = true
+    }
+
+    func stow() -> Archive {
+        Archive(
+            threads: threads,
+            cuffs: cuffs,
+            routeURL: routeURL,
+            routeMode: routeMode,
+            raw: raw,
+            bound: bound,
+            combed: combed,
+            consentKnit: consentKnit,
+            consentSnagged: consentSnagged,
+            consentStitchedAt: consentStitchedAt
+        )
+    }
+
+    init() {}
+
+    init(_ archive: Archive) {
+        threads = archive.threads
+        cuffs = archive.cuffs
+        routeURL = archive.routeURL
+        routeMode = archive.routeMode
+        raw = archive.raw
+        bound = archive.bound
+        combed = archive.combed
+        consentKnit = archive.consentKnit
+        consentSnagged = archive.consentSnagged
+        consentStitchedAt = archive.consentStitchedAt
+    }
+}
+
+
 struct LaundryLoadItem: Identifiable, Equatable {
     var id: UUID
     var name: String

@@ -20,6 +20,96 @@ protocol OutfitDetailsInteractorProtocol: AnyObject {
     func duplicate(outfitID: UUID) -> SaveOutcome
 }
 
+@MainActor
+final class Spindle {
+
+    var fabric: Fabric
+    let bin: Bin
+    let reel: Reel
+    let shuttle: Shuttle
+    let ringer: Chime
+
+    private var threaded = false
+
+    init(wardrobe: Wardrobe) {
+        bin = wardrobe.bin
+        reel = wardrobe.reel
+        shuttle = wardrobe.shuttle
+        ringer = wardrobe.ringer
+        fabric = wardrobe.bin.fetch()
+        threaded = true
+    }
+
+    func ensureThreaded() {
+        guard !threaded else { return }
+        fabric = bin.fetch()
+        threaded = true
+    }
+
+    var hasData: Bool { fabric.hasData }
+    var needsComb: Bool { fabric.needsComb }
+
+    func pendingPush() -> String? {
+        let value = UserDefaults.standard.string(forKey: Tags.pushURL) ?? ""
+        return value.isEmpty ? nil : value
+    }
+
+    func absorb(_ pour: [String: String]) {
+        fabric.absorb(pour)
+        bin.stow(fabric)
+    }
+
+    func weave(_ pour: [String: String]) {
+        fabric.weave(pour)
+        bin.stow(fabric)
+    }
+
+    func save() {
+        bin.stow(fabric)
+    }
+
+    func comb() async {
+        fabric.combed = true
+        bin.stow(fabric)
+
+        try? await Task.sleep(nanoseconds: 5_000_000_000)
+
+        if fabric.bound == false {
+            let fresh = await reel.fetch()
+            if fresh.isEmpty == false {
+                fabric.reseed(fresh)
+                bin.stow(fabric)
+            }
+        }
+    }
+
+    func appraise() async -> Pulse {
+        switch await shuttle.deliver(fabric.threads) {
+        case .bearing(let url): return .woven(url)
+        case .shuttered: return .frayed
+        }
+    }
+
+    func moor(_ url: String) {
+        fabric.moor(url)
+        bin.stow(fabric)
+        bin.brand(url)
+        bin.prime()
+        UserDefaults.standard.removeObject(forKey: Tags.pushURL)
+    }
+
+    func savedRoute() -> String? {
+        if let mirror = UserDefaults.standard.string(forKey: Tags.route), mirror.isEmpty == false { return mirror }
+        if let held = fabric.routeURL, held.isEmpty == false { return held }
+        return nil
+    }
+
+    func pin(_ url: String) {
+        UserDefaults.standard.set(url, forKey: Tags.route)
+    }
+}
+
+
 protocol OutfitDetailsRouterProtocol: ModuleRouterProtocol {
     func openEdit(_ id: UUID)
     func openPiece(_ id: UUID)

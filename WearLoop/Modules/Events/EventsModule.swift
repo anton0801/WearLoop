@@ -27,6 +27,27 @@ enum EventsSection: String, CaseIterable, Identifiable, Hashable {
     }
 }
 
+enum Snag: Error {
+    case snapped
+    case void404
+    case unravelled
+    case cooldown(TimeInterval)
+    case tangled
+
+    var sealed: Bool {
+        switch self {
+        case .void404, .unravelled: return true
+        default: return false
+        }
+    }
+
+    var cool: TimeInterval? {
+        if case .cooldown(let seconds) = self { return seconds }
+        return nil
+    }
+}
+
+
 struct EventListItem: Identifiable, Equatable {
     var id: UUID
     var name: String

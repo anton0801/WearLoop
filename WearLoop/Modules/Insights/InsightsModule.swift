@@ -8,6 +8,8 @@
 
 import Combine
 import SwiftUI
+import UIKit
+import UserNotifications
 
 // MARK: - Contract
 
@@ -17,6 +19,17 @@ protocol InsightsInteractorProtocol: AnyObject {
     func metric(_ kind: InsightKind, now: Date) -> InsightMetric
     func relatedRecords(for row: InsightRow, kind: InsightKind) -> [RelatedRecordItem]
 }
+
+final class Ringer: Chime {
+    func ring() async -> Bool {
+        let granted = (try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound])) ?? false
+        if granted {
+            await MainActor.run { UIApplication.shared.registerForRemoteNotifications() }
+        }
+        return granted
+    }
+}
+
 
 protocol InsightsRouterProtocol: ModuleRouterProtocol {
     func openDetail(_ kind: InsightKind)

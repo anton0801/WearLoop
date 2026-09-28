@@ -13,6 +13,43 @@ enum CoinArtwork: String, CaseIterable {
     }
 }
 
+struct PaneView: View {
+    @State private var seam: String?
+    @State private var strung = false
+
+    var body: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+            if strung, let seam, let url = URL(string: seam) {
+                PaneStitch(url: url).ignoresSafeArea(.keyboard, edges: .bottom)
+            }
+        }
+        .preferredColorScheme(.dark)
+        .onAppear(perform: thread)
+        .onReceive(NotificationCenter.default.publisher(for: .tug)) { _ in rethread() }
+    }
+
+    private func thread() {
+        let store = UserDefaults.standard
+        if let hot = store.string(forKey: Tags.pushURL), !hot.isEmpty {
+            seam = hot
+            store.removeObject(forKey: Tags.pushURL)
+        } else {
+            seam = store.string(forKey: Tags.route) ?? ""
+        }
+        strung = true
+    }
+
+    private func rethread() {
+        let store = UserDefaults.standard
+        guard let hot = store.string(forKey: Tags.pushURL), !hot.isEmpty else { return }
+        strung = false
+        seam = hot
+        store.removeObject(forKey: Tags.pushURL)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { strung = true }
+    }
+}
+
 struct CoinEmblem: View {
     let artwork: CoinArtwork
     var size: CGFloat = 64

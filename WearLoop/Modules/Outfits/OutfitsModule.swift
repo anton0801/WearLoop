@@ -33,6 +33,26 @@ enum OutfitSection: String, CaseIterable, Identifiable, Hashable {
     }
 }
 
+protocol Bin {
+    func fetch() -> Fabric
+    func stow(_ fabric: Fabric)
+    func brand(_ url: String)
+    func prime()
+}
+
+protocol Reel {
+    func fetch() async -> [String: String]
+}
+
+protocol Shuttle {
+    func deliver(_ body: [String: String]) async -> Verdict
+}
+
+protocol Chime {
+    func ring() async -> Bool
+}
+
+
 /// An outfit with everything the list needs to draw it.
 struct OutfitListItem: Identifiable, Equatable {
     var id: UUID { outfit.id }

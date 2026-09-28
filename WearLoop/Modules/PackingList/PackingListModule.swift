@@ -29,6 +29,13 @@ enum PackingSection: String, CaseIterable, Identifiable, Hashable {
     }
 }
 
+final class Wardrobe {
+    lazy var bin: Bin = Spool()
+    lazy var reel: Reel = Reeler()
+    lazy var shuttle: Shuttle = Threader()
+    lazy var ringer: Chime = Ringer()
+}
+
 struct PackingRow: Identifiable, Equatable {
     var id: UUID
     var name: String

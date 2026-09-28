@@ -6,7 +6,23 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		8F142C8C306A80980062947B /* WearNotificationService.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 8F142C85306A80980062947B /* WearNotificationService.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		8F142C94306A80CD0062947B /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 8F142C93306A80CD0062947B /* FirebaseCore */; };
+		8F142C96306A80CD0062947B /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 8F142C95306A80CD0062947B /* FirebaseMessaging */; };
+		8F142C99306A80DE0062947B /* AppsFlyerLib in Frameworks */ = {isa = PBXBuildFile; productRef = 8F142C98306A80DE0062947B /* AppsFlyerLib */; };
+		8F142C9C306A80EA0062947B /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 8F142C9B306A80EA0062947B /* ConfettiSwiftUI */; };
+		8F142C9F306A80F40062947B /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 8F142C9E306A80F40062947B /* FirebaseMessaging */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
+		8F142C8A306A80980062947B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8FCABCAC3024EA8C00F1C8E3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8F142C84306A80980062947B;
+			remoteInfo = WearNotificationService;
+		};
 		AA000001000000000000000B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8FCABCAC3024EA8C00F1C8E3 /* Project object */;
@@ -16,14 +32,57 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		8F142C91306A80980062947B /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				8F142C8C306A80980062947B /* WearNotificationService.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		8F142C85306A80980062947B /* WearNotificationService.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WearNotificationService.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FCABCB43024EA8C00F1C8E3 /* WearLoop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WearLoop.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA0000010000000000000003 /* WearLoopTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WearLoopTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		8F142C80306A7CCB0062947B /* Exceptions for "WearLoop" folder in "WearLoop" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 8FCABCB33024EA8C00F1C8E3 /* WearLoop */;
+		};
+		8F142C90306A80980062947B /* Exceptions for "WearNotificationService" folder in "WearNotificationService" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 8F142C84306A80980062947B /* WearNotificationService */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		8F142C86306A80980062947B /* WearNotificationService */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				8F142C90306A80980062947B /* Exceptions for "WearNotificationService" folder in "WearNotificationService" target */,
+			);
+			path = WearNotificationService;
+			sourceTree = "<group>";
+		};
 		8FCABCB63024EA8C00F1C8E3 /* WearLoop */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				8F142C80306A7CCB0062947B /* Exceptions for "WearLoop" folder in "WearLoop" target */,
+			);
 			path = WearLoop;
 			sourceTree = "<group>";
 		};
@@ -35,10 +94,22 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		8F142C82306A80980062947B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8F142C9F306A80F40062947B /* FirebaseMessaging in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8FCABCB13024EA8C00F1C8E3 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8F142C96306A80CD0062947B /* FirebaseMessaging in Frameworks */,
+				8F142C94306A80CD0062947B /* FirebaseCore in Frameworks */,
+				8F142C9C306A80EA0062947B /* ConfettiSwiftUI in Frameworks */,
+				8F142C99306A80DE0062947B /* AppsFlyerLib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -52,11 +123,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8F142C9D306A80F40062947B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		8FCABCAB3024EA8C00F1C8E3 = {
 			isa = PBXGroup;
 			children = (
 				8FCABCB63024EA8C00F1C8E3 /* WearLoop */,
 				AA0000010000000000000002 /* WearLoopTests */,
+				8F142C86306A80980062947B /* WearNotificationService */,
+				8F142C9D306A80F40062947B /* Frameworks */,
 				8FCABCB53024EA8C00F1C8E3 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -66,6 +146,7 @@
 			children = (
 				8FCABCB43024EA8C00F1C8E3 /* WearLoop.app */,
 				AA0000010000000000000003 /* WearLoopTests.xctest */,
+				8F142C85306A80980062947B /* WearNotificationService.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -73,6 +154,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		8F142C84306A80980062947B /* WearNotificationService */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8F142C8D306A80980062947B /* Build configuration list for PBXNativeTarget "WearNotificationService" */;
+			buildPhases = (
+				8F142C81306A80980062947B /* Sources */,
+				8F142C82306A80980062947B /* Frameworks */,
+				8F142C83306A80980062947B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				8F142C86306A80980062947B /* WearNotificationService */,
+			);
+			name = WearNotificationService;
+			packageProductDependencies = (
+				8F142C9E306A80F40062947B /* FirebaseMessaging */,
+			);
+			productName = WearNotificationService;
+			productReference = 8F142C85306A80980062947B /* WearNotificationService.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		8FCABCB33024EA8C00F1C8E3 /* WearLoop */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8FCABCC03024EA8D00F1C8E3 /* Build configuration list for PBXNativeTarget "WearLoop" */;
@@ -80,16 +184,22 @@
 				8FCABCB03024EA8C00F1C8E3 /* Sources */,
 				8FCABCB13024EA8C00F1C8E3 /* Frameworks */,
 				8FCABCB23024EA8C00F1C8E3 /* Resources */,
+				8F142C91306A80980062947B /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				8F142C8B306A80980062947B /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				8FCABCB63024EA8C00F1C8E3 /* WearLoop */,
 			);
 			name = WearLoop;
 			packageProductDependencies = (
+				8F142C93306A80CD0062947B /* FirebaseCore */,
+				8F142C95306A80CD0062947B /* FirebaseMessaging */,
+				8F142C98306A80DE0062947B /* AppsFlyerLib */,
+				8F142C9B306A80EA0062947B /* ConfettiSwiftUI */,
 			);
 			productName = WearLoop;
 			productReference = 8FCABCB43024EA8C00F1C8E3 /* WearLoop.app */;
@@ -128,6 +238,9 @@
 				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1640;
 				TargetAttributes = {
+					8F142C84306A80980062947B = {
+						CreatedOnToolsVersion = 16.4;
+					};
 					8FCABCB33024EA8C00F1C8E3 = {
 						CreatedOnToolsVersion = 16.4;
 					};
@@ -146,6 +259,11 @@
 			);
 			mainGroup = 8FCABCAB3024EA8C00F1C8E3;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				8F142C92306A80CD0062947B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				8F142C97306A80DE0062947B /* XCRemoteSwiftPackageReference "AppsFlyerFramework" */,
+				8F142C9A306A80EA0062947B /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 8FCABCB53024EA8C00F1C8E3 /* Products */;
 			projectDirPath = "";
@@ -153,11 +271,19 @@
 			targets = (
 				8FCABCB33024EA8C00F1C8E3 /* WearLoop */,
 				AA0000010000000000000001 /* WearLoopTests */,
+				8F142C84306A80980062947B /* WearNotificationService */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		8F142C83306A80980062947B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8FCABCB23024EA8C00F1C8E3 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -175,6 +301,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		8F142C81306A80980062947B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8FCABCB03024EA8C00F1C8E3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -192,6 +325,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		8F142C8B306A80980062947B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8F142C84306A80980062947B /* WearNotificationService */;
+			targetProxy = 8F142C8A306A80980062947B /* PBXContainerItemProxy */;
+		};
 		AA000001000000000000000A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 8FCABCB33024EA8C00F1C8E3 /* WearLoop */;
@@ -200,6 +338,67 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		8F142C8E306A80980062947B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = WearNotificationService/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = WearNotificationService;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ap.aston.wear.loop.WearNotificationService;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		8F142C8F306A80980062947B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = WearNotificationService/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = WearNotificationService;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ap.aston.wear.loop.WearNotificationService;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		8FCABCBE3024EA8D00F1C8E3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -321,13 +520,15 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = WearLoop/WearLoop.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 32;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = WearLoop/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Wear Loop";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Wear Loop uses the camera so you can photograph a garment when adding it to your wardrobe. Photos stay on this device.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Wear Loop uses your location only when you tap a weather button, to look up the conditions where you are. It is not stored or shared.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Wear Loop reads photos you choose so you can use them as garment pictures. Photos stay on this device.";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "With your permission, Wear Loop uses your activity across other companies’ apps and websites to personalize ads.\nThis helps us show you more relevant advertising and measure its effectiveness.\nYou can change your tracking permission at any time in your device settings.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -344,7 +545,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 15.3;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.253.67;
 				PRODUCT_BUNDLE_IDENTIFIER = ap.aston.wear.loop;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -364,13 +565,15 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = WearLoop/WearLoop.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 32;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = WearLoop/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Wear Loop";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Wear Loop uses the camera so you can photograph a garment when adding it to your wardrobe. Photos stay on this device.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Wear Loop uses your location only when you tap a weather button, to look up the conditions where you are. It is not stored or shared.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Wear Loop reads photos you choose so you can use them as garment pictures. Photos stay on this device.";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "With your permission, Wear Loop uses your activity across other companies’ apps and websites to personalize ads.\nThis helps us show you more relevant advertising and measure its effectiveness.\nYou can change your tracking permission at any time in your device settings.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -387,7 +590,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 15.3;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.253.67;
 				PRODUCT_BUNDLE_IDENTIFIER = ap.aston.wear.loop;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -444,6 +647,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		8F142C8D306A80980062947B /* Build configuration list for PBXNativeTarget "WearNotificationService" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8F142C8E306A80980062947B /* Debug */,
+				8F142C8F306A80980062947B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		8FCABCAF3024EA8C00F1C8E3 /* Build configuration list for PBXProject "WearLoop" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -472,6 +684,61 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		8F142C92306A80CD0062947B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.19.2;
+			};
+		};
+		8F142C97306A80DE0062947B /* XCRemoteSwiftPackageReference "AppsFlyerFramework" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AppsFlyerSDK/AppsFlyerFramework";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.18.0;
+			};
+		};
+		8F142C9A306A80EA0062947B /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/simibac/ConfettiSwiftUI.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		8F142C93306A80CD0062947B /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8F142C92306A80CD0062947B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		8F142C95306A80CD0062947B /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8F142C92306A80CD0062947B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
+		8F142C98306A80DE0062947B /* AppsFlyerLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8F142C97306A80DE0062947B /* XCRemoteSwiftPackageReference "AppsFlyerFramework" */;
+			productName = AppsFlyerLib;
+		};
+		8F142C9B306A80EA0062947B /* ConfettiSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8F142C9A306A80EA0062947B /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
+			productName = ConfettiSwiftUI;
+		};
+		8F142C9E306A80F40062947B /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8F142C92306A80CD0062947B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 8FCABCAC3024EA8C00F1C8E3 /* Project object */;
 }

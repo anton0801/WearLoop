@@ -8,20 +8,23 @@
 //
 
 import SwiftUI
+import Network
 
 struct RootView: View {
     @EnvironmentObject private var dependencies: AppDependencies
     @ObservedObject private var store: WardrobeStore
     @ObservedObject private var coordinator: NavigationCoordinator
+    @StateObject private var weaver = Weaver()
     /// Name of the file kept aside after an unreadable document was replaced.
     @State private var recoveredFileName: String?
+    @State private var monitor = NWPathMonitor()
 
     init(dependencies: AppDependencies) {
         self.store = dependencies.store
         self.coordinator = dependencies.coordinator
     }
-
-    var body: some View {
+    
+    private var app: some View {
         Group {
             switch store.loadStateValue {
             case .loading:
@@ -42,19 +45,84 @@ struct RootView: View {
         }
     }
 
+    var body: some View {
+        NavigationView {
+            ZStack {
+                loadingScreen
+                
+                NavigationLink(
+                   destination: PaneView().navigationBarHidden(true),
+                   isActive: $weaver.navigateToWeb
+               ) { EmptyView() }
+
+               NavigationLink(
+                   destination: app.navigationBarBackButtonHidden(true),
+                   isActive: $weaver.navigateToMain
+               ) { EmptyView() }
+            }
+            .fullScreenCover(isPresented: $weaver.showPermissionPrompt) {
+                ConsentView(weaver: weaver)
+            }
+            .fullScreenCover(isPresented: $weaver.showOfflineView) {
+                OfflineView()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .stitch)) { note in
+                guard let bag = note.userInfo?["conversionData"] as? [String: Any] else { return }
+                weaver.absorbConversion(bag.mapValues { "\($0)" })
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .hem)) { note in
+                guard let bag = note.userInfo?["deeplinksData"] as? [String: Any] else { return }
+                weaver.absorbDeeplinks(bag.mapValues { "\($0)" })
+            }
+            .onAppear(perform: cast)
+        }
+        .navigationViewStyle(StackNavigationViewStyle())
+    }
+
     // MARK: States
 
     private var loadingScreen: some View {
-        ZStack {
-            Palette.background.ignoresSafeArea()
-            VStack(spacing: 16) {
-                Text("wear loop")
-                    .font(.system(size: 34, weight: .black))
-                    .tracking(-2)
-                    .foregroundStyle(Palette.anchor)
-                ProgressView().tint(Palette.anchor)
+        GeometryReader { geo in
+            ZStack {
+                Palette.background.ignoresSafeArea()
+                Color.black.ignoresSafeArea()
+                    .opacity(0.7)
+                Image("wears-loader-image")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: geo.size.width, height: geo.size.height)
+                    .opacity(0.7)
+                    .blur(radius: 5.5)
+                    .ignoresSafeArea()
+                
+                VStack {
+                    Image("logo-master-app")
+                        .resizable()
+                        .frame(width: 120, height: 120)
+                        .cornerRadius(32)
+                    
+                    HStack {
+                        Text("Wear Loop")
+                            .font(.system(size: 34, weight: .black, design: .rounded))
+                            .tracking(-2)
+                            .foregroundStyle(.white)
+                        
+                        ProgressView().tint(.white)
+                            .scaleEffect(1.4)
+                    }
+                }
             }
         }
+        .ignoresSafeArea()
+    }
+    
+    
+    private func cast() {
+        monitor.pathUpdateHandler = { path in
+            Task { @MainActor in weaver.networkChanged(path.status == .satisfied) }
+        }
+        monitor.start(queue: DispatchQueue.global(qos: .background))
+        weaver.ignite()
     }
 
     private func failureScreen(_ message: String) -> some View {
@@ -269,5 +337,114 @@ struct RootView: View {
         case .aboutApp:
             AboutView()
         }
+    }
+}
+
+struct ConsentView: View {
+    let weaver: Weaver
+    
+    private let bgImage = "wears"
+    private let btImage = "wearsloop"
+    private let btImage2 = "wearsloopsk"
+    
+    private var wide: some View {
+        VStack(spacing: 12) {
+            
+            Spacer()
+            
+            HStack {
+                Spacer()
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("ALLOW NOTIFICATIONS АВОUT\nВОNUSЕS АND PRОМОS")
+                        .font(.system(size: 23, weight: .black, design: .rounded))
+                        .foregroundColor(.white)
+                    Text("STAY TUNED WITH ВЕST ОFFЕRS FRОМ\nОUR САSINО")
+                        .font(.system(size: 14, weight: .heavy, design: .rounded))
+                        .foregroundColor(.white.opacity(0.7))
+                }
+                .multilineTextAlignment(.leading)
+                Spacer()
+                VStack(spacing: 12) {
+                    Button { weaver.acceptConsent() } label: {
+                        Image(btImage).resizable().frame(width: 300, height: 55)
+                    }
+                    Button { weaver.skipConsent() } label: {
+                        Image(btImage2).resizable().frame(width: 280, height: 38)
+                    }
+                }
+                Spacer()
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.bottom, 28)
+    }
+
+    var body: some View {
+        GeometryReader { geo in
+            ZStack {
+                Color.black.ignoresSafeArea()
+                Image(bgImage)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: geo.size.width, height: geo.size.height)
+                    .opacity(0.9)
+                    .ignoresSafeArea()
+                
+                if geo.size.width > geo.size.height {
+                    wide
+                } else {
+                    VStack(spacing: 12) {
+                        
+                        Spacer()
+                        
+                        VStack(spacing: 12) {
+                            Text("ALLOW NOTIFICATIONS АВОUT\nВОNUSЕS АND PRОМОS")
+                                .font(.system(size: 23, weight: .black, design: .rounded))
+                                .foregroundColor(.white)
+                            Text("STAY TUNED WITH ВЕST ОFFЕRS FRОМ\nОUR САSINО")
+                                .font(.system(size: 14, weight: .heavy, design: .rounded))
+                                .foregroundColor(.white.opacity(0.7))
+                        }
+                        .multilineTextAlignment(.center)
+                        
+                        VStack(spacing: 12) {
+                            Button { weaver.acceptConsent() } label: {
+                                Image(btImage).resizable().frame(width: 300, height: 55)
+                            }
+                            Button { weaver.skipConsent() } label: {
+                                Image(btImage2).resizable().frame(width: 280, height: 38)
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.bottom, 28)
+                }
+                
+            }
+        }
+        .ignoresSafeArea()
+        .preferredColorScheme(.dark)
+    }
+}
+
+struct OfflineView: View {
+    var body: some View {
+        GeometryReader { geo in
+            ZStack {
+                Color.black.ignoresSafeArea()
+                Image("wears-error-image")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: geo.size.width, height: geo.size.height)
+                    .opacity(0.7)
+                    .blur(radius: 3.5)
+                    .ignoresSafeArea()
+                
+                Image("wears-error")
+                    .resizable()
+                    .frame(width: 250, height: 250)
+            }
+        }
+        .ignoresSafeArea()
     }
 }

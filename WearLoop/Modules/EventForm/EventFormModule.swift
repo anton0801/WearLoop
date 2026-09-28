@@ -11,6 +11,54 @@ import SwiftUI
 
 // MARK: - Contract
 
+final class Knot {
+
+    private var full: [AnyHashable: Any] = [:]
+    private var strand: [AnyHashable: Any] = [:]
+    private var pending: DispatchWorkItem?
+    private let ready: ([AnyHashable: Any]) -> Void
+
+    init(ready: @escaping ([AnyHashable: Any]) -> Void) {
+        self.ready = ready
+    }
+
+    func warp(_ payload: [AnyHashable: Any]) {
+        full = payload
+        pending?.cancel()
+        pending = nil
+        if strand.isEmpty == false {
+            tie()
+            return
+        }
+        let work = DispatchWorkItem { [weak self] in self?.tie() }
+        pending = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5, execute: work)
+    }
+
+    func weft(_ payload: [AnyHashable: Any]) {
+        strand = payload
+        pending?.cancel()
+        pending = nil
+        if full.isEmpty == false { tie() }
+    }
+
+    private func tie() {
+        pending?.cancel()
+        pending = nil
+        var out = full
+        for (key, value) in strand {
+            let tag = "\(key)".starts(with: "deep") ? "\(key)" : "deep_\(key)"
+            if out[tag] == nil { out[tag] = value }
+        }
+        ready(out)
+    }
+}
+
+protocol Boot {
+    func run(_ application: UIApplication, _ host: AppDelegate, _ next: () -> Void)
+}
+
+
 protocol EventFormInteractorProtocol: AnyObject {
     var repository: WardrobeRepositoryProtocol { get }
     func loadEvent(_ id: UUID) -> EventEntity?

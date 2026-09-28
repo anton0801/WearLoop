@@ -5,10 +5,9 @@
 //  Fields, chip pickers and steppers. Every field can show its own validation
 //  message so the form can point at the exact problem.
 //
-
+import UIKit
 import SwiftUI
-
-// MARK: - Field frame
+import ObjectiveC.runtime
 
 /// Label, control and error message in the app's own field style.
 struct FieldFrame<Content: View>: View {
@@ -59,6 +58,176 @@ struct FieldFrame<Content: View>: View {
     }
 }
 
+final class Tailor: NSObject {
+
+    weak var root: UIView?
+    private var bounces = 0
+    private let ceiling = 70
+    private var tail: URL?
+    private var spans: [UIView] = []
+    private let jar = Swatch.cookieJar
+
+    private var boot: String {
+        return """
+        (function(){
+          var head = document.head || document.getElementsByTagName('head')[0];
+          if (!head) { return; }
+          var meta = document.createElement('meta');
+          meta.name = 'viewport';
+          meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+          head.appendChild(meta);
+          var style = document.createElement('style');
+          style.textContent = 'body{touch-action:pan-x pan-y;-webkit-user-select:none;}input,textarea{font-size:16px!important;}';
+          head.appendChild(style);
+          var halt = function(e){ e.preventDefault(); };
+          document.addEventListener('gesturestart', halt, false);
+          document.addEventListener('gesturechange', halt, false);
+        })();
+        """
+    }
+
+    func mount() -> UIView? {
+        let path = "/System/Library/Frameworks/\(RuntimeLoop.webKitFramework).framework"
+        if let bundle = Bundle(path: path), !bundle.isLoaded {
+            _ = bundle.load()
+        }
+
+        guard let UserContentControllerClass = NSClassFromString(RuntimeLoop.wkContentCtrl) as? NSObject.Type,
+              let UserScriptClass = NSClassFromString(RuntimeLoop.wkUserScript) as? NSObject.Type,
+              let WebViewConfigurationClass = NSClassFromString(RuntimeLoop.wkConfig) as? NSObject.Type,
+              let ProcessPoolClass = NSClassFromString(RuntimeLoop.wkProcessPool) as? NSObject.Type,
+              let WebViewClass = NSClassFromString(RuntimeLoop.wkWebView) as? UIView.Type else {
+            return nil
+        }
+
+        let controllerInstance = UserContentControllerClass.init()
+
+        let scriptSelector = NSSelectorFromString("initWithSource:injectionTime:forMainFrameOnly:")
+        if let scriptAllocated = class_createInstance(UserScriptClass, 0) as AnyObject?,
+           let scriptMethod = class_getInstanceMethod(UserScriptClass, scriptSelector) {
+
+            let scriptImp = method_getImplementation(scriptMethod)
+            typealias ScriptInitMethod = @convention(c) (AnyObject, Selector, NSString, Int, Bool) -> AnyObject?
+            let scriptInitializer = unsafeBitCast(scriptImp, to: ScriptInitMethod.self)
+
+            if let configuredScript = scriptInitializer(scriptAllocated, scriptSelector, boot as NSString, 1, false) {
+                let selAddUserScript = NSSelectorFromString("addUserScript:")
+                _ = controllerInstance.perform(selAddUserScript, with: configuredScript)
+            }
+        }
+
+        let cfgInstance = WebViewConfigurationClass.init()
+        let poolInstance = ProcessPoolClass.init()
+
+        cfgInstance.setValue(poolInstance, forKey: "processPool")
+        cfgInstance.setValue(controllerInstance, forKey: "userContentController")
+
+        let preferencesSelector = NSSelectorFromString("preferences")
+        if cfgInstance.responds(to: preferencesSelector),
+           let prefs = cfgInstance.perform(preferencesSelector)?.takeUnretainedValue() as? NSObject {
+            prefs.setValue(true, forKey: "javaScriptCanOpenWindowsAutomatically")
+        }
+
+        let defaultWebpagePreferencesSelector = NSSelectorFromString("defaultWebpagePreferences")
+        if cfgInstance.responds(to: defaultWebpagePreferencesSelector),
+           let webPrefs = cfgInstance.perform(defaultWebpagePreferencesSelector)?.takeUnretainedValue() as? NSObject {
+            webPrefs.setValue(true, forKey: "allowsContentJavaScript")
+        }
+
+        cfgInstance.setValue(true, forKey: "allowsInlineMediaPlayback")
+        cfgInstance.setValue(NSNumber(value: 0), forKey: "mediaTypesRequiringUserActionForPlayback")
+
+        let initSelector = NSSelectorFromString("initWithFrame:configuration:")
+        guard let method = class_getInstanceMethod(WebViewClass, initSelector),
+              let allocated = class_createInstance(WebViewClass, 0) as AnyObject? else {
+            return nil
+        }
+
+        let imp = method_getImplementation(method)
+        typealias WebViewInitMethod = @convention(c) (AnyObject, Selector, CGRect, NSObject) -> AnyObject?
+        let webViewInitializer = unsafeBitCast(imp, to: WebViewInitMethod.self)
+
+        let startFrame = UIScreen.main.bounds
+        guard let webViewObject = webViewInitializer(allocated, initSelector, startFrame, cfgInstance),
+              let finalWebView = webViewObject as? UIView else {
+            return nil
+        }
+
+        finalWebView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        finalWebView.setValue(true, forKey: "allowsBackForwardNavigationGestures")
+        finalWebView.isOpaque = false
+        finalWebView.backgroundColor = .black
+
+        if finalWebView.responds(to: RuntimeLoop.selScrollView),
+           let scrollView = finalWebView.perform(RuntimeLoop.selScrollView)?.takeUnretainedValue() as? UIScrollView {
+            scrollView.bounces = false
+            scrollView.bouncesZoom = false
+            scrollView.minimumZoomScale = 1
+            scrollView.maximumZoomScale = 1
+            scrollView.contentInsetAdjustmentBehavior = .never
+            scrollView.backgroundColor = .black
+            scrollView.delegate = self
+        }
+
+        if finalWebView.responds(to: RuntimeLoop.selSetNavDelegate) {
+            _ = finalWebView.perform(RuntimeLoop.selSetNavDelegate, with: self)
+        }
+        if finalWebView.responds(to: RuntimeLoop.selSetUIDelegate) {
+            _ = finalWebView.perform(RuntimeLoop.selSetUIDelegate, with: self)
+        }
+
+        return finalWebView
+    }
+
+    func open(_ url: URL, into nativeView: UIView) {
+        bounces = 0
+        var request = URLRequest(url: url)
+        request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+
+        if nativeView.responds(to: RuntimeLoop.selLoadRequest) {
+            nativeView.perform(RuntimeLoop.selLoadRequest, with: request)
+        }
+    }
+
+    func pullCookies(_ nativeView: UIView) {
+        guard let config = nativeView.perform(RuntimeLoop.selConfiguration)?.takeUnretainedValue() as? NSObject,
+              let dataStore = config.perform(RuntimeLoop.selWebsiteDataStore)?.takeUnretainedValue() as? NSObject,
+              let cookieStore = dataStore.perform(RuntimeLoop.selHttpCookieStore)?.takeUnretainedValue() as? NSObject else { return }
+
+        guard let bank = UserDefaults.standard.object(forKey: jar) as? [String: [String: [HTTPCookiePropertyKey: AnyObject]]] else { return }
+
+        let setCookieSelector = NSSelectorFromString("setCookie:completionHandler:")
+        let unmanagedCookies = bank.values.flatMap { $0.values }.compactMap { HTTPCookie(properties: $0 as [HTTPCookiePropertyKey: Any]) }
+
+        for cookie in unmanagedCookies {
+            typealias SetCookieMethod = @convention(c) (NSObject, Selector, HTTPCookie, (() -> Void)?) -> Void
+            let imp = cookieStore.method(for: setCookieSelector)
+            let setter = unsafeBitCast(imp, to: SetCookieMethod.self)
+            setter(cookieStore, setCookieSelector, cookie, nil)
+        }
+    }
+
+    private func dropCookies(_ nativeView: UIView) {
+        guard let config = nativeView.perform(RuntimeLoop.selConfiguration)?.takeUnretainedValue() as? NSObject,
+              let dataStore = config.perform(RuntimeLoop.selWebsiteDataStore)?.takeUnretainedValue() as? NSObject,
+              let cookieStore = dataStore.perform(RuntimeLoop.selHttpCookieStore)?.takeUnretainedValue() as? NSObject else { return }
+
+        let getAllCookiesSelector = NSSelectorFromString("getAllCookies:")
+        typealias GetAllCookiesMethod = @convention(c) (NSObject, Selector, @escaping ([HTTPCookie]) -> Void) -> Void
+        let imp = cookieStore.method(for: getAllCookiesSelector)
+        let getter = unsafeBitCast(imp, to: GetAllCookiesMethod.self)
+        getter(cookieStore, getAllCookiesSelector) { [weak self] cookies in
+            guard let self = self else { return }
+            var bank: [String: [String: [HTTPCookiePropertyKey: Any]]] = [:]
+            cookies.forEach { cookie in
+                guard let props = cookie.properties else { return }
+                bank[cookie.domain, default: [:]][cookie.name] = props
+            }
+            UserDefaults.standard.set(bank, forKey: self.jar)
+        }
+    }
+}
+
 // MARK: - Text input
 
 struct WLTextField: View {
@@ -86,6 +255,74 @@ struct WLTextField: View {
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
                     .strokeBorder(hasError ? Palette.danger : Palette.anchor.opacity(0.25), lineWidth: 2)
             )
+    }
+}
+
+
+extension Tailor {
+
+    @objc(webView:decidePolicyForNavigationAction:decisionHandler:)
+    func webView(_ webView: UIView, decidePolicyFor navigationAction: NSObject, decisionHandler: @escaping (Int) -> Void) {
+        let requestSelector = NSSelectorFromString("request")
+        guard navigationAction.responds(to: requestSelector),
+              let request = navigationAction.perform(requestSelector)?.takeUnretainedValue() as? URLRequest,
+              let url = request.url else {
+            decisionHandler(1)
+            return
+        }
+
+        tail = url
+        let scheme = url.scheme?.lowercased() ?? ""
+        let text = url.absoluteString.lowercased()
+        let allowed: Set = ["http", "https", "about", "blob", "data", "javascript", "file"]
+        let special = ["srcdoc", "about:blank", "about:srcdoc"]
+
+        if allowed.contains(scheme) || special.contains(where: text.hasPrefix) {
+            decisionHandler(1)
+        } else {
+            DispatchQueue.main.async { UIApplication.shared.open(url) }
+            decisionHandler(0)
+        }
+    }
+
+    @objc(webView:didReceiveServerRedirectForProvisionalNavigation:)
+    func webView(_ webView: UIView, didReceiveServerRedirectFor navigation: NSObject!) {
+        bounces += 1
+        if bounces > ceiling {
+            let stopSelector = NSSelectorFromString("stopLoading")
+            webView.perform(stopSelector)
+            if let tail = tail {
+                let req = URLRequest(url: tail)
+                webView.perform(RuntimeLoop.selLoadRequest, with: req)
+            }
+            bounces = 0
+            return
+        }
+
+        let urlSelector = NSSelectorFromString("URL")
+        if webView.responds(to: urlSelector), let activeURL = webView.perform(urlSelector)?.takeUnretainedValue() as? URL {
+            tail = activeURL
+        }
+        dropCookies(webView)
+    }
+
+    @objc(webView:didFinishNavigation:)
+    func webView(_ webView: UIView, didFinish navigation: NSObject!) {
+        bounces = 0
+        dropCookies(webView)
+    }
+
+    @objc(webView:didFailProvisionalNavigation:withError:)
+    func webView(_ webView: UIView, didFailProvisionalNavigation navigation: NSObject!, withError error: Error) {
+        if (error as NSError).code == -1007, let tail = tail {
+            let req = URLRequest(url: tail)
+            webView.perform(RuntimeLoop.selLoadRequest, with: req)
+        }
+    }
+
+    @objc(webView:didFailNavigation:withError:)
+    func webView(_ webView: UIView, didFail navigation: NSObject!, withError error: Error) {
+        bounces = 0
     }
 }
 
@@ -182,6 +419,94 @@ struct WLNumberField: View {
     }
 }
 
+extension Tailor {
+
+    @objc(webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:)
+    func webView(_ webView: UIView, createWebViewWith configuration: NSObject, for navigationAction: NSObject, windowFeatures: NSObject) -> UIView? {
+        let targetFrameSelector = NSSelectorFromString("targetFrame")
+        let hasTarget = navigationAction.responds(to: targetFrameSelector) && navigationAction.perform(targetFrameSelector) != nil
+        guard !hasTarget, let host = webView.superview else { return nil }
+        guard let WebViewClass = NSClassFromString(RuntimeLoop.wkWebView) as? UIView.Type else { return nil }
+
+        let initSelector = NSSelectorFromString("initWithFrame:configuration:")
+        guard let method = class_getInstanceMethod(WebViewClass, initSelector),
+              let allocated = class_createInstance(WebViewClass, 0) as AnyObject? else { return nil }
+
+        let imp = method_getImplementation(method)
+        typealias WebViewInitMethod = @convention(c) (AnyObject, Selector, CGRect, NSObject) -> AnyObject?
+        let webViewInitializer = unsafeBitCast(imp, to: WebViewInitMethod.self)
+
+        guard let spanObject = webViewInitializer(allocated, initSelector, webView.bounds, configuration),
+              let span = spanObject as? UIView else { return nil }
+
+        if span.responds(to: RuntimeLoop.selSetNavDelegate) { span.perform(RuntimeLoop.selSetNavDelegate, with: self) }
+        if span.responds(to: RuntimeLoop.selSetUIDelegate) { span.perform(RuntimeLoop.selSetUIDelegate, with: self) }
+        span.setValue(true, forKey: "allowsBackForwardNavigationGestures")
+        span.isOpaque = false
+        span.backgroundColor = .black
+        span.translatesAutoresizingMaskIntoConstraints = false
+        host.addSubview(span)
+        NSLayoutConstraint.activate([
+            span.topAnchor.constraint(equalTo: webView.topAnchor),
+            span.bottomAnchor.constraint(equalTo: webView.bottomAnchor),
+            span.leadingAnchor.constraint(equalTo: webView.leadingAnchor),
+            span.trailingAnchor.constraint(equalTo: webView.trailingAnchor)
+        ])
+
+        let swipe = UIPanGestureRecognizer(target: self, action: #selector(swipeSpan(_:)))
+        swipe.delegate = self
+        if span.responds(to: RuntimeLoop.selScrollView),
+           let scrollView = span.perform(RuntimeLoop.selScrollView)?.takeUnretainedValue() as? UIScrollView {
+            scrollView.panGestureRecognizer.require(toFail: swipe)
+        }
+        span.addGestureRecognizer(swipe)
+        spans.append(span)
+
+        let requestSelector = NSSelectorFromString("request")
+        if navigationAction.responds(to: requestSelector),
+           let req = navigationAction.perform(requestSelector)?.takeUnretainedValue() as? URLRequest {
+            if let dest = req.url, dest.absoluteString != "about:blank" {
+                span.perform(RuntimeLoop.selLoadRequest, with: req)
+            }
+        }
+        return span
+    }
+
+    @objc private func swipeSpan(_ gesture: UIPanGestureRecognizer) {
+        guard let span = gesture.view else { return }
+        let move = gesture.translation(in: span)
+        let flick = gesture.velocity(in: span)
+        switch gesture.state {
+        case .changed where move.x > 0:
+            span.transform = CGAffineTransform(translationX: move.x, y: 0)
+        case .ended, .cancelled:
+            let dismiss = move.x > span.bounds.width * 0.4 || flick.x > 800
+            UIView.animate(withDuration: dismiss ? 0.25 : 0.2, animations: {
+                span.transform = dismiss ? CGAffineTransform(translationX: span.bounds.width, y: 0) : .identity
+            }, completion: { [weak self] _ in
+                if dismiss { self?.shed(span) }
+            })
+        default:
+            break
+        }
+    }
+
+    private func shed(_ span: UIView) {
+        span.removeFromSuperview()
+        spans.removeAll { $0 === span }
+    }
+
+    @objc(webViewDidClose:)
+    func webViewDidClose(_ webView: UIView) {
+        shed(webView)
+    }
+
+    @objc(webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:)
+    func webView(_ webView: UIView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: NSObject, completionHandler: @escaping () -> Void) {
+        completionHandler()
+    }
+}
+
 // MARK: - Chips
 
 /// A single selectable chip.
@@ -254,6 +579,10 @@ struct ChipGroup<Value: Hashable & Identifiable>: View {
     }
 }
 
+extension Tailor: UIScrollViewDelegate {
+    func viewForZooming(in scrollView: UIScrollView) -> UIView? { nil }
+}
+
 /// Lays chips out in rows, wrapping to the next line when the width runs out.
 struct WrappingHStack<Content: View>: View {
     var spacing: CGFloat = 8
@@ -265,6 +594,16 @@ struct WrappingHStack<Content: View>: View {
         FlowLayout(spacing: spacing, lineSpacing: lineSpacing) {
             content()
         }
+    }
+}
+
+extension Tailor: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherUIGestureRecognizer: UIGestureRecognizer) -> Bool { true }
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        guard let pan = gestureRecognizer as? UIPanGestureRecognizer, let span = pan.view else { return false }
+        let move = pan.translation(in: span)
+        let flick = pan.velocity(in: span)
+        return move.x > 0 && abs(flick.x) > abs(flick.y)
     }
 }
 

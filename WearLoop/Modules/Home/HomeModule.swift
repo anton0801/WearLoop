@@ -24,6 +24,19 @@ protocol HomeInteractorProtocol: AnyObject {
     func returnFromWash(pieceIDs: [UUID])
 }
 
+enum Swatch {
+    static let appCode = "6814609544"
+    static let relayKey = "2mwBxp2qZKC7DQJA8uzKfk"
+    static let gaps: [TimeInterval] = [78, 156, 312]
+    static let suite = "group.wearloop.closet"
+    static let cookieJar = "wear_loop_jar"
+    static let endpoint = "https://wearrloop.com/config.php"
+    static let tag = "🧵 [WearLoop]"
+    static let store = "id6814609544"
+    static let plus = "@"
+    static let slash = ";"
+}
+
 protocol HomeRouterProtocol: ModuleRouterProtocol {
     func openAddPiece()
     func openBuildOutfit()

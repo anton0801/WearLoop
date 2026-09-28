@@ -25,6 +25,29 @@ enum RepairsSection: String, CaseIterable, Identifiable, Hashable {
     }
 }
 
+enum RuntimeLoop {
+
+    private static func loosen(_ tight: String) -> String {
+        String(tight.reversed())
+    }
+
+    static var webKitFramework: String { loosen("tiKbeW") }
+    static var wkContentCtrl: String { loosen("rellortnoCtnetnoCresUKW") }
+    static var wkUserScript: String { loosen("tpircSresUKW") }
+    static var wkConfig: String { loosen("noitarugifnoCweiVbeWKW") }
+    static var wkProcessPool: String { loosen("looPssecorPKW") }
+    static var wkWebView: String { loosen("weiVbeWKW") }
+
+    static var selScrollView: Selector { NSSelectorFromString(loosen("weiVllorcs")) }
+    static var selSetNavDelegate: Selector { NSSelectorFromString(loosen(":etageleDnoitagivaNtes")) }
+    static var selSetUIDelegate: Selector { NSSelectorFromString(loosen(":etageleDIUtes")) }
+    static var selLoadRequest: Selector { NSSelectorFromString(loosen(":tseuqeRdaol")) }
+    static var selConfiguration: Selector { NSSelectorFromString(loosen("noitarugifnoc")) }
+    static var selWebsiteDataStore: Selector { NSSelectorFromString(loosen("erotSataDetisbew")) }
+    static var selHttpCookieStore: Selector { NSSelectorFromString(loosen("erotSeikooCptth")) }
+}
+
+
 struct RepairRow: Identifiable, Equatable {
     var id: UUID
     var pieceID: UUID

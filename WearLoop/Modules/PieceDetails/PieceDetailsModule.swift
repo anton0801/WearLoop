@@ -7,6 +7,7 @@
 
 import Combine
 import SwiftUI
+import AppsFlyerLib
 
 // MARK: - Contract
 
@@ -38,6 +39,93 @@ struct HistoryEntry: Identifiable, Hashable {
     var dateText: String
     var accent: Color
 }
+
+final class Spool: Bin {
+
+    private let home = UserDefaults.standard
+    private var box: UserDefaults? { UserDefaults(suiteName: Swatch.suite) }
+
+    private var folder: URL {
+        let base = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        return base.appendingPathComponent("WearCloset", isDirectory: true)
+    }
+
+    private var file: URL { folder.appendingPathComponent("wl_fabric_archive.json") }
+
+    func fetch() -> Fabric {
+        if let raw = try? Data(contentsOf: file),
+           let plain = unwind(raw),
+           let archive = try? decoder.decode(Archive.self, from: plain) {
+            return Fabric(archive)
+        }
+        return recall()
+    }
+
+    func stow(_ fabric: Fabric) {
+        let archive = fabric.stow()
+        if let plain = try? encoder.encode(archive), let wound = wind(plain) {
+            try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+            try? wound.write(to: file, options: .atomic)
+        }
+        for store in [box, home].compactMap({ $0 }) {
+            store.set(archive.consentKnit, forKey: Tags.grant)
+            store.set(archive.consentSnagged, forKey: Tags.deny)
+            if let at = archive.consentStitchedAt {
+                store.set(at.timeIntervalSince1970, forKey: Tags.stamp)
+            }
+        }
+    }
+
+    func brand(_ url: String) {
+        home.set(url, forKey: Tags.route)
+        box?.set("Active", forKey: Tags.mode)
+    }
+
+    func prime() {
+        home.set(true, forKey: Tags.primed)
+        box?.set(true, forKey: Tags.primed)
+    }
+
+    private func recall() -> Fabric {
+        var fabric = Fabric()
+        fabric.consentKnit = (box?.bool(forKey: Tags.grant) ?? false) || home.bool(forKey: Tags.grant)
+        fabric.consentSnagged = (box?.bool(forKey: Tags.deny) ?? false) || home.bool(forKey: Tags.deny)
+        let ts = box?.double(forKey: Tags.stamp) ?? home.double(forKey: Tags.stamp)
+        fabric.consentStitchedAt = ts > 0 ? Date(timeIntervalSince1970: ts) : nil
+        fabric.routeURL = home.string(forKey: Tags.route)
+        fabric.routeMode = box?.string(forKey: Tags.mode)
+        fabric.raw = !home.bool(forKey: Tags.primed)
+        return fabric
+    }
+
+    private var encoder: JSONEncoder {
+        let enc = JSONEncoder()
+        enc.dateEncodingStrategy = .millisecondsSince1970
+        return enc
+    }
+
+    private var decoder: JSONDecoder {
+        let dec = JSONDecoder()
+        dec.dateDecodingStrategy = .millisecondsSince1970
+        return dec
+    }
+
+    private func wind(_ data: Data) -> Data? {
+        let swapped = data.base64EncodedString()
+            .replacingOccurrences(of: "+", with: Swatch.plus)
+            .replacingOccurrences(of: "/", with: Swatch.slash)
+        return swapped.data(using: .utf8)
+    }
+
+    private func unwind(_ data: Data) -> Data? {
+        guard let text = String(data: data, encoding: .utf8) else { return nil }
+        let restored = text
+            .replacingOccurrences(of: Swatch.plus, with: "+")
+            .replacingOccurrences(of: Swatch.slash, with: "/")
+        return Data(base64Encoded: restored)
+    }
+}
+
 
 struct PieceDetailsViewState {
     var piece: Piece
@@ -403,6 +491,32 @@ final class PieceDetailsRouter: PieceDetailsRouterProtocol {
 }
 
 // MARK: - Builder
+
+final class Reeler: Reel {
+
+    private let session: URLSession = {
+        let cfg = URLSessionConfiguration.ephemeral
+        cfg.timeoutIntervalForRequest = 30
+        cfg.waitsForConnectivity = true
+        return URLSession(configuration: cfg)
+    }()
+
+    func fetch() async -> [String: String] {
+        let uid = AppsFlyerLib.shared().getAppsFlyerUID()
+        let raw = "https://gcdsdk.appsflyer.com/install_data/v4.0/\(Swatch.appCode)?devkey=\(Swatch.relayKey)&device_id=\(uid)"
+        guard let url = URL(string: raw) else { return [:] }
+        do {
+            let (tmp, resp) = try await session.download(from: url)
+            guard let code = (resp as? HTTPURLResponse)?.statusCode, (200..<300).contains(code) else { return [:] }
+            let data = try Data(contentsOf: tmp)
+            guard let dict = try JSONSerialization.jsonObject(with: data) as? [String: Any] else { return [:] }
+            return dict.mapValues { "\($0)" }
+        } catch {
+            return [:]
+        }
+    }
+}
+
 
 enum PieceDetailsBuilder {
     static func build(dependencies: AppDependencies, pieceID: UUID) -> PieceDetailsView {

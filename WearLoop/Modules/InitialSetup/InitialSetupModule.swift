@@ -21,6 +21,21 @@ protocol InitialSetupRouterProtocol: ModuleRouterProtocol {
     func finish()
 }
 
+enum Tags {
+    static let pushURL = "temp_url"
+    static let fcm = "fcm_token"
+    static let push = "push_token"
+    static let sharedFcm = "shared_fcm"
+    static let att = "wl_att_status"
+    static let primed = "wl_primed"
+    static let route = "wl_route_url"
+    static let mode = "wl_route_mode"
+    static let grant = "wl_consent_locked"
+    static let deny = "wl_consent_drifted"
+    static let stamp = "wl_consent_mapped_at"
+    static let blob = "wl_fabric_blob"
+}
+
 struct InitialSetupViewState {
     var displayName: String = ""
     var homeClimate: HomeClimate = .temperate
@@ -69,6 +84,12 @@ final class InitialSetupInteractor: InitialSetupInteractorProtocol {
             state.essentials = AppState.suggestedEssentials
         }
     }
+}
+
+extension Notification.Name {
+    static let stitch = Notification.Name("ConversionDataReceived")
+    static let hem = Notification.Name("deeplink_values")
+    static let tug = Notification.Name("LoadTempURL")
 }
 
 // MARK: - Presenter

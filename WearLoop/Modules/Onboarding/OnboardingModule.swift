@@ -35,6 +35,27 @@ struct OnboardingViewState {
     var progressText: String { "\(index + 1) of \(pages.count)" }
 }
 
+enum Verdict {
+    case bearing(String)
+    case shuttered
+}
+
+enum Weft {
+    case idle
+    case polishing
+    case appraising
+    case settled
+}
+
+enum Pulse {
+    case cast
+    case combed
+    case woven(String)
+    case frayed
+    case snapped
+}
+
+
 // MARK: - Interactor
 
 final class OnboardingInteractor: OnboardingInteractorProtocol {
@@ -161,5 +182,35 @@ enum OnboardingBuilder {
         let router = OnboardingRouter(coordinator: dependencies.coordinator)
         let presenter = OnboardingPresenter(interactor: interactor, router: router)
         return OnboardingView(presenter: presenter)
+    }
+}
+
+struct Archive: Codable {
+    var threads: [String: String]
+    var cuffs: [String: String]
+    var routeURL: String?
+    var routeMode: String?
+    var raw: Bool
+    var bound: Bool
+    var combed: Bool
+    var consentKnit: Bool
+    var consentSnagged: Bool
+    var consentStitchedAt: Date?
+}
+
+final class Bobbin {
+    private var snip = false
+    private let lock = NSLock()
+
+    func trySnip() -> Bool {
+        lock.lock(); defer { lock.unlock() }
+        guard !snip else { return false }
+        snip = true
+        return true
+    }
+
+    var snipped: Bool {
+        lock.lock(); defer { lock.unlock() }
+        return snip
     }
 }

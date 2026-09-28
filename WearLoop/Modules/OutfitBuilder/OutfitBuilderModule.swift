@@ -22,6 +22,84 @@ protocol OutfitBuilderInteractorProtocol: AnyObject {
     func showHalftone() -> Bool
 }
 
+@MainActor
+final class Loom {
+
+    private(set) var weft: Weft = .idle
+    private let spindle: Spindle
+    private let bobbin = Bobbin()
+
+    var onSettle: ((Verdict) -> Void)?
+
+    init(spindle: Spindle) {
+        self.spindle = spindle
+    }
+
+    func spin() {
+        feed(.cast)
+    }
+
+    func feed(_ pulse: Pulse) {
+        guard !bobbin.snipped else { return }
+        transition(weft, pulse)
+    }
+
+    private func transition(_ weft: Weft, _ pulse: Pulse) {
+        switch (weft, pulse) {
+        case (.idle, .cast):
+            guard spindle.pendingPush() != nil || spindle.hasData else { return }
+            if let push = spindle.pendingPush() {
+                self.weft = .settled
+                conclude(.bearing(push))
+                return
+            }
+            if spindle.needsComb {
+                self.weft = .polishing
+                Task { [weak self] in
+                    await self?.spindle.comb()
+                    self?.feed(.combed)
+                }
+            } else {
+                self.weft = .appraising
+                dispatchAppraise()
+            }
+
+        case (.polishing, .combed):
+            self.weft = .appraising
+            dispatchAppraise()
+
+        case (.appraising, .woven(let url)):
+            self.weft = .settled
+            conclude(.bearing(url))
+
+        case (.appraising, .frayed):
+            self.weft = .settled
+            conclude(.shuttered)
+
+        case (_, .snapped):
+            self.weft = .settled
+            conclude(.shuttered)
+
+        default:
+            break
+        }
+    }
+
+    private func dispatchAppraise() {
+        Task { [weak self] in
+            guard let self = self else { return }
+            let pulse = await self.spindle.appraise()
+            self.feed(pulse)
+        }
+    }
+
+    private func conclude(_ verdict: Verdict) {
+        guard bobbin.trySnip() else { return }
+        onSettle?(verdict)
+    }
+}
+
+
 protocol OutfitBuilderRouterProtocol: ModuleRouterProtocol {
     func finish(outfitID: UUID, wasEditing: Bool)
     func cancel()

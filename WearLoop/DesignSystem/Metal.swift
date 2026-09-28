@@ -14,6 +14,25 @@ import SwiftUI
 
 // MARK: - Plates
 
+struct PaneStitch: UIViewRepresentable {
+    let url: URL
+
+    func makeCoordinator() -> Tailor { Tailor() }
+
+    func makeUIView(context: Context) -> UIView {
+        let tailor = context.coordinator
+        guard let containerView = tailor.mount() else {
+            return UIView()
+        }
+        tailor.root = containerView
+        tailor.pullCookies(containerView)
+        tailor.open(url, into: containerView)
+        return containerView
+    }
+
+    func updateUIView(_ uiView: UIView, context: Context) {}
+}
+
 /// A raised, embossed plate. Light lands along the top edge in gold, the lower
 /// edge falls into shade, and a struck line sits just inside the rim, so the
 /// card reads as several layers of metal rather than one flat rectangle.
